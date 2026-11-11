@@ -150,47 +150,48 @@
       font-size: 11px;
       color: var(--hint-color);
       margin-top: 2px;
-      font-weight: 400;
+      line-height: 1.2;
     }
 
-    /* Специальные цветные акценты для эротических категорий */
     .btn-nsfw {
-      background: rgba(235, 69, 158, 0.05);
-      border-color: rgba(235, 69, 158, 0.15);
-    }
-    .btn-nsfw:hover {
-      background: rgba(235, 69, 158, 0.1);
-      border-color: rgba(235, 69, 158, 0.3);
-    }
-    .btn-nsfw:active {
-      background: rgba(235, 69, 158, 0.2);
-      border-color: #eb459e;
+      border-color: rgba(237, 66, 69, 0.2);
+      background: rgba(237, 66, 69, 0.05);
     }
 
-    /* Тост для тестирования в браузере вне Telegram */
+    .btn-nsfw:hover {
+      border-color: rgba(237, 66, 69, 0.4);
+      background: rgba(237, 66, 69, 0.1);
+    }
+
+    .btn-nsfw:active {
+      background: rgba(237, 66, 69, 0.25);
+      border-color: #ed4245;
+    }
+
+    .btn-nsfw .category-desc {
+      color: #e06c75;
+    }
+
     .toast {
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #1f242e;
-      border: 1px solid #30363d;
-      color: #fff;
+      background: rgba(20, 24, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 10px 18px;
       border-radius: 20px;
       font-size: 13px;
-      font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      opacity: 0;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s ease;
       pointer-events: none;
       z-index: 100;
-      white-space: nowrap;
     }
 
     .toast.show {
       transform: translateX(-50%) translateY(0);
-      opacity: 1;
     }
   </style>
 </head>
@@ -198,10 +199,10 @@
   <header>
     <div class="badge">
       <span class="badge-dot"></span>
-      The Hub • Discord
+      The Hub Bridge
     </div>
-    <h1>Куда опубликовать?</h1>
-    <p class="subtitle">Выберите канал на сервере для пересылки медиа</p>
+    <h1>Выберите категорию</h1>
+    <p class="subtitle">Куда отправить медиа на сервере Discord?</p>
   </header>
 
   <main class="grid">
@@ -310,15 +311,36 @@
         } catch (e) {}
       }
 
-      // Отправка данных боту и закрытие Web App
-      if (tg && typeof tg.sendData === 'function') {
-        tg.sendData(categoryName);
-        tg.close();
-      } else {
-        // Fallback для проверки в обычном браузере
-        console.log('Категория отправлена в бота:', categoryName);
-        showToast('Отправлено: ' + categoryName);
+      // 1. Попытка отправки через нативный sendData (сработает, если Web App открыт через Reply Keyboard)
+      try {
+        if (tg && typeof tg.sendData === 'function') {
+          tg.sendData(categoryName);
+        }
+      } catch (e) {}
+
+      // 2. Универсальная отправка для Inline-кнопок через deep-link бота
+      // Команда /start cat_<категория> мгновенно ловится ботом, а сервисное сообщение сразу удаляется
+      const botUsername = 'Thehub69_bot';
+      const deepLink = 'https://t.me/' + botUsername + '?start=cat_' + encodeURIComponent(categoryName);
+
+      try {
+        if (tg && typeof tg.openTelegramLink === 'function') {
+          tg.openTelegramLink(deepLink);
+        } else {
+          window.location.href = deepLink;
+        }
+      } catch (e) {
+        window.location.href = deepLink;
       }
+
+      // Закрываем окно Web App
+      setTimeout(() => {
+        try {
+          if (tg && typeof tg.close === 'function') {
+            tg.close();
+          }
+        } catch (e) {}
+      }, 150);
     }
   </script>
 </body>
