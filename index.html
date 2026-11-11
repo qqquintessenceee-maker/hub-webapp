@@ -18,14 +18,89 @@
       --card-hover: rgba(255, 255, 255, 0.09);
       --card-active: rgba(88, 101, 242, 0.25);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; flex-direction: column; padding: 16px 14px 24px; overflow-x: hidden; }
-    header { text-align: center; margin-bottom: 18px; }
+    header { text-align: center; margin-bottom: 14px; }
     .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: rgba(88, 101, 242, 0.15); border: 1px solid rgba(88, 101, 242, 0.3); color: #7289da; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
     .badge-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #5865f2; box-shadow: 0 0 8px #5865f2; }
     h1 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
     p.subtitle { font-size: 13px; color: var(--hint-color); }
+    /* Переключатели опций: Спойлер и Анонимно */
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 2px 14px;
+    }
+    .toggle-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle-option:not(:last-child) {
+      border-bottom: 1px solid var(--card-border);
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toggle-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .toggle-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.12);
+      transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 26px;
+      border: 1px solid var(--card-border);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #ffffff;
+      transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+    .switch input:checked + .slider {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    .switch input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+    /* Сетка категорий */
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; }
     
     .category-btn { position: relative; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 12px; color: var(--text-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; min-height: 80px; transition: all 0.12s ease; overflow: hidden; outline: none; }
@@ -50,7 +125,29 @@
     <h1>Выберите категорию</h1>
     <p class="subtitle">Куда отправить медиа на сервере Discord?</p>
   </header>
-
+  <!-- Блок тумблеров опций -->
+  <div class="options-container">
+    <label class="toggle-option" for="opt-blur">
+      <div class="toggle-label">
+        <span class="toggle-icon">👁️</span>
+        <span class="toggle-text">Скрыть под спойлер</span>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="opt-blur">
+        <span class="slider"></span>
+      </div>
+    </label>
+    <label class="toggle-option" for="opt-anon">
+      <div class="toggle-label">
+        <span class="toggle-icon">🕵️</span>
+        <span class="toggle-text">Анонимно</span>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="opt-anon">
+        <span class="slider"></span>
+      </div>
+    </label>
+  </div>
   <main class="grid">
     <button class="category-btn" onclick="sendCategory('selfie')">
       <div class="icon-wrapper">📸</div>
@@ -76,16 +173,15 @@
       <div class="icon-wrapper">🎨</div>
       <div><div class="category-name">Личное творчество</div><div class="category-desc">├・🖌️・творчество</div></div>
     </button>
-    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfw_m')">
+    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfwm')">
       <div class="icon-wrapper">🙎‍♂️</div>
-      <div><div class="category-name">Эро-парни</div><div class="category-desc">18+ контент</div></div>
+      <div><div class="category-name">Парни (18+)</div><div class="category-desc">18+ контент</div></div>
     </button>
-    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfw_f')">
+    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfwf')">
       <div class="icon-wrapper">🙍‍♀️</div>
-      <div><div class="category-name">Эро-девушки</div><div class="category-desc">18+ контент</div></div>
+      <div><div class="category-name">Девушки (18+)</div><div class="category-desc">18+ контент</div></div>
     </button>
   </main>
-
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
@@ -94,16 +190,23 @@
       if (tg.setHeaderColor) tg.setHeaderColor('#0e1217');
       if (tg.setBackgroundColor) tg.setBackgroundColor('#0e1217');
     }
-
     function sendCategory(safeCategoryName) {
       if (tg && tg.HapticFeedback) {
         try { tg.HapticFeedback.impactOccurred('medium'); } catch (e) {}
       }
-
-      // Формируем чистый URL без кириллицы
+      // 1. Считываем состояния чекбоксов (1 если включено, 0 если выключено)
+      const isBlur = document.getElementById('opt-blur')?.checked ? '1' : '0';
+      const isAnon = document.getElementById('opt-anon')?.checked ? '1' : '0';
+      // 2. Формируем payload: cat_<category>_<isBlur>_<isAnon>
+      const payload = 'cat_' + safeCategoryName + '_' + isBlur + '_' + isAnon;
+      try {
+        if (tg && typeof tg.sendData === 'function') {
+          tg.sendData(payload);
+        }
+      } catch (e) {}
+      // 3. Формируем deepLink для Telegram
       const botUsername = 'Thehub69_bot';
-      const deepLink = 'https://t.me/' + botUsername + '?start=cat_' + safeCategoryName;
-
+      const deepLink = 'https://t.me/' + botUsername + '?start=' + payload;
       try {
         if (tg && typeof tg.openTelegramLink === 'function') {
           tg.openTelegramLink(deepLink);
@@ -113,7 +216,6 @@
       } catch (e) {
         window.location.href = deepLink;
       }
-
       setTimeout(() => {
         try { if (tg && typeof tg.close === 'function') tg.close(); } catch (e) {}
       }, 150);
