@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0e1217">
   <title>Поделиться в Discord | The Hub</title>
-  <!-- Telegram Web App JS SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -20,308 +19,90 @@
       --card-active: rgba(88, 101, 242, 0.25);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 16px 14px 24px;
-      overflow-x: hidden;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 18px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: rgba(88, 101, 242, 0.15);
-      border: 1px solid rgba(88, 101, 242, 0.3);
-      color: #7289da;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: #5865f2;
-      box-shadow: 0 0 8px #5865f2;
-    }
-
-    h1 {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-      margin-bottom: 4px;
-    }
-
-    p.subtitle {
-      font-size: 13px;
-      color: var(--hint-color);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      flex: 1;
-    }
-
-    .category-btn {
-      position: relative;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 14px 12px;
-      color: var(--text-color);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      min-height: 80px;
-      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
-      overflow: hidden;
-      text-decoration: none;
-      outline: none;
-    }
-
-    .category-btn::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .category-btn:hover {
-      background: var(--card-hover);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .category-btn:hover::before {
-      opacity: 1;
-    }
-
-    .category-btn:active {
-      transform: scale(0.96);
-      background: var(--card-active);
-      border-color: #5865f2;
-    }
-
-    .icon-wrapper {
-      font-size: 26px;
-      margin-bottom: 6px;
-      line-height: 1;
-    }
-
-    .category-name {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.25;
-      color: #f0f3f6;
-    }
-
-    .category-desc {
-      font-size: 11px;
-      color: var(--hint-color);
-      margin-top: 2px;
-      line-height: 1.2;
-    }
-
-    .btn-nsfw {
-      border-color: rgba(237, 66, 69, 0.2);
-      background: rgba(237, 66, 69, 0.05);
-    }
-
-    .btn-nsfw:hover {
-      border-color: rgba(237, 66, 69, 0.4);
-      background: rgba(237, 66, 69, 0.1);
-    }
-
-    .btn-nsfw:active {
-      background: rgba(237, 66, 69, 0.25);
-      border-color: #ed4245;
-    }
-
-    .btn-nsfw .category-desc {
-      color: #e06c75;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: rgba(20, 24, 30, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 18px;
-      border-radius: 20px;
-      font-size: 13px;
-      color: #fff;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      transition: transform 0.25s ease;
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; flex-direction: column; padding: 16px 14px 24px; overflow-x: hidden; }
+    header { text-align: center; margin-bottom: 18px; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: rgba(88, 101, 242, 0.15); border: 1px solid rgba(88, 101, 242, 0.3); color: #7289da; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #5865f2; box-shadow: 0 0 8px #5865f2; }
+    h1 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    p.subtitle { font-size: 13px; color: var(--hint-color); }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; }
+    
+    .category-btn { position: relative; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 12px; color: var(--text-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; min-height: 80px; transition: all 0.12s ease; overflow: hidden; outline: none; }
+    .category-btn::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); opacity: 0; transition: opacity 0.2s ease; }
+    .category-btn:hover { background: var(--card-hover); border-color: rgba(255, 255, 255, 0.15); }
+    .category-btn:hover::before { opacity: 1; }
+    .category-btn:active { transform: scale(0.96); background: var(--card-active); border-color: #5865f2; }
+    
+    .icon-wrapper { font-size: 26px; margin-bottom: 6px; line-height: 1; }
+    .category-name { font-size: 14px; font-weight: 600; line-height: 1.25; color: #f0f3f6; }
+    .category-desc { font-size: 11px; color: var(--hint-color); margin-top: 2px; line-height: 1.2; }
+    
+    .btn-nsfw { border-color: rgba(237, 66, 69, 0.2); background: rgba(237, 66, 69, 0.05); }
+    .btn-nsfw:hover { border-color: rgba(237, 66, 69, 0.4); background: rgba(237, 66, 69, 0.1); }
+    .btn-nsfw:active { background: rgba(237, 66, 69, 0.25); border-color: #ed4245; }
+    .btn-nsfw .category-desc { color: #e06c75; }
   </style>
 </head>
 <body>
   <header>
-    <div class="badge">
-      <span class="badge-dot"></span>
-      The Hub Bridge
-    </div>
+    <div class="badge"><span class="badge-dot"></span>The Hub Bridge</div>
     <h1>Выберите категорию</h1>
     <p class="subtitle">Куда отправить медиа на сервере Discord?</p>
   </header>
 
   <main class="grid">
-    <!-- 1. Сэлфи -->
-    <button class="category-btn" onclick="sendCategory('Сэлфи')">
+    <button class="category-btn" onclick="sendCategory('selfie')">
       <div class="icon-wrapper">📸</div>
-      <div>
-        <div class="category-name">Сэлфи</div>
-        <div class="category-desc">├・🔥・сэлфи</div>
-      </div>
+      <div><div class="category-name">Сэлфи</div><div class="category-desc">├・🔥・сэлфи</div></div>
     </button>
-
-    <!-- 2. Мем -->
-    <button class="category-btn" onclick="sendCategory('Мем')">
+    <button class="category-btn" onclick="sendCategory('meme')">
       <div class="icon-wrapper">🎭</div>
-      <div>
-        <div class="category-name">Мем</div>
-        <div class="category-desc">╭・💿・меморий</div>
-      </div>
+      <div><div class="category-name">Мем</div><div class="category-desc">╭・💿・меморий</div></div>
     </button>
-
-    <!-- 3. Картинки -->
-    <button class="category-btn" onclick="sendCategory('Картинки')">
+    <button class="category-btn" onclick="sendCategory('pics')">
       <div class="icon-wrapper">🖼️</div>
-      <div>
-        <div class="category-name">Картинки</div>
-        <div class="category-desc">├・👹・скрины</div>
-      </div>
+      <div><div class="category-name">Картинки</div><div class="category-desc">├・👹・скрины</div></div>
     </button>
-
-    <!-- 4. Ваши фото -->
-    <button class="category-btn" onclick="sendCategory('Ваши фото')">
+    <button class="category-btn" onclick="sendCategory('photo')">
       <div class="icon-wrapper">📷</div>
-      <div>
-        <div class="category-name">Ваши фото</div>
-        <div class="category-desc">├・🌄・фотографии</div>
-      </div>
+      <div><div class="category-name">Ваши фото</div><div class="category-desc">├・🌄・фотографии</div></div>
     </button>
-
-    <!-- 5. Другое -->
-    <button class="category-btn" onclick="sendCategory('Другое')">
+    <button class="category-btn" onclick="sendCategory('other')">
       <div class="icon-wrapper">💬</div>
-      <div>
-        <div class="category-name">Другое</div>
-        <div class="category-desc">Главный чат Хаба</div>
-      </div>
+      <div><div class="category-name">Другое</div><div class="category-desc">Главный чат Хаба</div></div>
     </button>
-
-    <!-- 6. Личное творчество -->
-    <button class="category-btn" onclick="sendCategory('Личное творчество')">
+    <button class="category-btn" onclick="sendCategory('art')">
       <div class="icon-wrapper">🎨</div>
-      <div>
-        <div class="category-name">Личное творчество</div>
-        <div class="category-desc">├・🖌️・творчество</div>
-      </div>
+      <div><div class="category-name">Личное творчество</div><div class="category-desc">├・🖌️・творчество</div></div>
     </button>
-
-    <!-- 7. Эро-парни -->
-    <button class="category-btn btn-nsfw" onclick="sendCategory('Эро-парни')">
+    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfw_m')">
       <div class="icon-wrapper">🙎‍♂️</div>
-      <div>
-        <div class="category-name">Эро-парни</div>
-        <div class="category-desc">18+ контент</div>
-      </div>
+      <div><div class="category-name">Эро-парни</div><div class="category-desc">18+ контент</div></div>
     </button>
-
-    <!-- 8. Эро-девушки -->
-    <button class="category-btn btn-nsfw" onclick="sendCategory('Эро-девушки')">
+    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfw_f')">
       <div class="icon-wrapper">🙍‍♀️</div>
-      <div>
-        <div class="category-name">Эро-девушки</div>
-        <div class="category-desc">18+ контент</div>
-      </div>
+      <div><div class="category-name">Эро-девушки</div><div class="category-desc">18+ контент</div></div>
     </button>
   </main>
 
-  <div id="toast" class="toast"></div>
-
   <script>
     const tg = window.Telegram?.WebApp;
-
-    // Инициализация Telegram Web App
     if (tg) {
       tg.ready();
       tg.expand();
-      if (tg.setHeaderColor) {
-        tg.setHeaderColor('#0e1217');
-      }
-      if (tg.setBackgroundColor) {
-        tg.setBackgroundColor('#0e1217');
-      }
+      if (tg.setHeaderColor) tg.setHeaderColor('#0e1217');
+      if (tg.setBackgroundColor) tg.setBackgroundColor('#0e1217');
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
-    }
-
-    function sendCategory(categoryName) {
-      // Тактильная отдача на мобильных устройствах
+    function sendCategory(safeCategoryName) {
       if (tg && tg.HapticFeedback) {
-        try {
-          tg.HapticFeedback.impactOccurred('medium');
-        } catch (e) {}
+        try { tg.HapticFeedback.impactOccurred('medium'); } catch (e) {}
       }
 
-      // 1. Попытка отправки через нативный sendData (сработает, если Web App открыт через Reply Keyboard)
-      try {
-        if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(categoryName);
-        }
-      } catch (e) {}
-
-      // 2. Универсальная отправка для Inline-кнопок через deep-link бота
-      // Команда /start cat_<категория> мгновенно ловится ботом, а сервисное сообщение сразу удаляется
+      // Формируем чистый URL без кириллицы
       const botUsername = 'Thehub69_bot';
-      const deepLink = 'https://t.me/' + botUsername + '?start=cat_' + encodeURIComponent(categoryName);
+      const deepLink = 'https://t.me/' + botUsername + '?start=cat_' + safeCategoryName;
 
       try {
         if (tg && typeof tg.openTelegramLink === 'function') {
@@ -333,13 +114,8 @@
         window.location.href = deepLink;
       }
 
-      // Закрываем окно Web App
       setTimeout(() => {
-        try {
-          if (tg && typeof tg.close === 'function') {
-            tg.close();
-          }
-        } catch (e) {}
+        try { if (tg && typeof tg.close === 'function') tg.close(); } catch (e) {}
       }, 150);
     }
   </script>
