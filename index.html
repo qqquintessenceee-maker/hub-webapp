@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0e1217">
+  <title>Поделиться в Discord | The Hub</title>
+  <!-- Telegram Web App JS SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-color: var(--tg-theme-bg-color, #0e1217);
+      --secondary-bg: var(--tg-theme-secondary-bg-color, #161b22);
+      --text-color: var(--tg-theme-text-color, #ffffff);
+      --hint-color: var(--tg-theme-hint-color, #8b949e);
+      --accent-color: var(--tg-theme-button-color, #5865f2);
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(255, 255, 255, 0.09);
+      --card-active: rgba(88, 101, 242, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 14px 24px;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(88, 101, 242, 0.15);
+      border: 1px solid rgba(88, 101, 242, 0.3);
+      color: #7289da;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #5865f2;
+      box-shadow: 0 0 8px #5865f2;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    p.subtitle {
+      font-size: 13px;
+      color: var(--hint-color);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    .category-btn {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px 12px;
+      color: var(--text-color);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      min-height: 80px;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+      overflow: hidden;
+      text-decoration: none;
+      outline: none;
+    }
+
+    .category-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .category-btn:hover {
+      background: var(--card-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .category-btn:hover::before {
+      opacity: 1;
+    }
+
+    .category-btn:active {
+      transform: scale(0.96);
+      background: var(--card-active);
+      border-color: #5865f2;
+    }
+
+    .icon-wrapper {
+      font-size: 26px;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+
+    .category-name {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #f0f3f6;
+    }
+
+    .category-desc {
+      font-size: 11px;
+      color: var(--hint-color);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    /* Специальные цветные акценты для эротических категорий */
+    .btn-nsfw {
+      background: rgba(235, 69, 158, 0.05);
+      border-color: rgba(235, 69, 158, 0.15);
+    }
+    .btn-nsfw:hover {
+      background: rgba(235, 69, 158, 0.1);
+      border-color: rgba(235, 69, 158, 0.3);
+    }
+    .btn-nsfw:active {
+      background: rgba(235, 69, 158, 0.2);
+      border-color: #eb459e;
+    }
+
+    /* Тост для тестирования в браузере вне Telegram */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1f242e;
+      border: 1px solid #30363d;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      The Hub • Discord
+    </div>
+    <h1>Куда опубликовать?</h1>
+    <p class="subtitle">Выберите канал на сервере для пересылки медиа</p>
+  </header>
+
+  <main class="grid">
+    <!-- 1. Сэлфи -->
+    <button class="category-btn" onclick="sendCategory('Сэлфи')">
+      <div class="icon-wrapper">📸</div>
+      <div>
+        <div class="category-name">Сэлфи</div>
+        <div class="category-desc">├・🔥・сэлфи</div>
+      </div>
+    </button>
+
+    <!-- 2. Мем -->
+    <button class="category-btn" onclick="sendCategory('Мем')">
+      <div class="icon-wrapper">🎭</div>
+      <div>
+        <div class="category-name">Мем</div>
+        <div class="category-desc">╭・💿・меморий</div>
+      </div>
+    </button>
+
+    <!-- 3. Картинки -->
+    <button class="category-btn" onclick="sendCategory('Картинки')">
+      <div class="icon-wrapper">🖼️</div>
+      <div>
+        <div class="category-name">Картинки</div>
+        <div class="category-desc">├・👹・скрины</div>
+      </div>
+    </button>
+
+    <!-- 4. Ваши фото -->
+    <button class="category-btn" onclick="sendCategory('Ваши фото')">
+      <div class="icon-wrapper">📷</div>
+      <div>
+        <div class="category-name">Ваши фото</div>
+        <div class="category-desc">├・🌄・фотографии</div>
+      </div>
+    </button>
+
+    <!-- 5. Другое -->
+    <button class="category-btn" onclick="sendCategory('Другое')">
+      <div class="icon-wrapper">💬</div>
+      <div>
+        <div class="category-name">Другое</div>
+        <div class="category-desc">Главный чат Хаба</div>
+      </div>
+    </button>
+
+    <!-- 6. Личное творчество -->
+    <button class="category-btn" onclick="sendCategory('Личное творчество')">
+      <div class="icon-wrapper">🎨</div>
+      <div>
+        <div class="category-name">Личное творчество</div>
+        <div class="category-desc">├・🖌️・творчество</div>
+      </div>
+    </button>
+
+    <!-- 7. Эро-парни -->
+    <button class="category-btn btn-nsfw" onclick="sendCategory('Эро-парни')">
+      <div class="icon-wrapper">🙎‍♂️</div>
+      <div>
+        <div class="category-name">Эро-парни</div>
+        <div class="category-desc">18+ контент</div>
+      </div>
+    </button>
+
+    <!-- 8. Эро-девушки -->
+    <button class="category-btn btn-nsfw" onclick="sendCategory('Эро-девушки')">
+      <div class="icon-wrapper">🙍‍♀️</div>
+      <div>
+        <div class="category-name">Эро-девушки</div>
+        <div class="category-desc">18+ контент</div>
+      </div>
+    </button>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+
+    // Инициализация Telegram Web App
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      if (tg.setHeaderColor) {
+        tg.setHeaderColor('#0e1217');
+      }
+      if (tg.setBackgroundColor) {
+        tg.setBackgroundColor('#0e1217');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function sendCategory(categoryName) {
+      // Тактильная отдача на мобильных устройствах
+      if (tg && tg.HapticFeedback) {
+        try {
+          tg.HapticFeedback.impactOccurred('medium');
+        } catch (e) {}
+      }
+
+      // Отправка данных боту и закрытие Web App
+      if (tg && typeof tg.sendData === 'function') {
+        tg.sendData(categoryName);
+        tg.close();
+      } else {
+        // Fallback для проверки в обычном браузере
+        console.log('Категория отправлена в бота:', categoryName);
+        showToast('Отправлено: ' + categoryName);
+      }
+    }
+  </script>
+</body>
+</html>
