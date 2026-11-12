@@ -31,7 +31,7 @@
     .link-container {
       margin-bottom: 12px;
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      border: 1px solid rgba(88, 101, 242, 0.4);
       border-radius: 14px;
       padding: 0 14px;
       display: flex;
@@ -42,16 +42,15 @@
     }
 
     .link-container:focus-within {
-      border-color: rgba(88, 101, 242, 0.6);
-      box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.15);
-      background: rgba(255, 255, 255, 0.06);
+      border-color: #5865f2;
+      box-shadow: 0 0 12px rgba(88, 101, 242, 0.35);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .link-icon {
-      font-size: 16px;
-      opacity: 0.8;
-      flex-shrink: 0;
+      font-size: 18px;
       line-height: 1;
+      opacity: 0.9;
     }
 
     .link-input {
@@ -59,7 +58,7 @@
       background: transparent;
       border: none;
       outline: none;
-      color: var(--text-color);
+      color: #ffffff;
       font-size: 14px;
       font-family: inherit;
     }
@@ -67,28 +66,6 @@
     .link-input::placeholder {
       color: var(--hint-color);
       font-size: 13px;
-    }
-
-    .link-clear {
-      display: none;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: var(--hint-color);
-      font-size: 12px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      line-height: 1;
-      padding: 0;
-    }
-
-    .link-clear:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: #ffffff;
     }
 
     /* Переключатели опций (Спойлер / Анонимно) */
@@ -216,7 +193,6 @@
       autocapitalize="none"
       spellcheck="false"
     />
-    <button type="button" class="link-clear" id="link-clear" onclick="clearLinkInput()" title="Очистить">✕</button>
   </div>
 
   <!-- Блок тумблеров опций -->
@@ -288,46 +264,6 @@
       if (tg.setBackgroundColor) tg.setBackgroundColor('#0e1217');
     }
 
-    const linkInput = document.getElementById('link-input');
-    const clearBtn = document.getElementById('link-clear');
-
-    function checkClearBtn() {
-      if (linkInput && clearBtn) {
-        clearBtn.style.display = linkInput.value.trim() ? 'inline-flex' : 'none';
-      }
-    }
-
-    if (linkInput) {
-      linkInput.addEventListener('input', checkClearBtn);
-      // Считываем url из query-параметра ?url=... если он был передан
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const queryUrl = urlParams.get('url');
-        if (queryUrl) {
-          linkInput.value = queryUrl;
-          checkClearBtn();
-        }
-      } catch (e) {}
-    }
-
-    function clearLinkInput() {
-      if (linkInput) {
-        linkInput.value = '';
-        checkClearBtn();
-        linkInput.focus();
-      }
-    }
-
-    function getSafeBase64(str) {
-      try {
-        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-          return String.fromCharCode('0x' + p1);
-        })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-      } catch (e) {
-        return '';
-      }
-    }
-
     function sendCategory(safeCategoryName) {
       if (tg && tg.HapticFeedback) {
         try { tg.HapticFeedback.impactOccurred('medium'); } catch (e) {}
@@ -335,19 +271,23 @@
 
       const isBlur = document.getElementById('opt-blur')?.checked ? '1' : '0';
       const isAnon = document.getElementById('opt-anon')?.checked ? '1' : '0';
+      const linkInput = document.getElementById('link-input');
       const linkVal = linkInput ? linkInput.value.trim() : '';
 
-      // 1. Формируем полезную нагрузку
       let payload = 'cat_' + safeCategoryName + '_' + isBlur + '_' + isAnon;
       let sendDataPayload = payload;
 
       if (linkVal) {
         sendDataPayload = payload + '|' + linkVal;
-        const cleanLink = linkVal.replace(/^https?:\/\//i, '');
-        const b64 = getSafeBase64(cleanLink);
-        if (b64 && (payload.length + 1 + b64.length) <= 64) {
-          payload = payload + '_' + b64;
-        }
+        try {
+          const cleanLink = linkVal.replace(/^https?:\/\//i, '');
+          const b64 = btoa(encodeURIComponent(cleanLink).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+            return String.fromCharCode('0x' + p1);
+          })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+          if (b64 && (payload.length + 1 + b64.length) <= 64) {
+            payload = payload + '_' + b64;
+          }
+        } catch (e) {}
       }
 
       try {
