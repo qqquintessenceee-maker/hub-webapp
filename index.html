@@ -3,223 +3,1421 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0e1217">
-  <title>Поделиться в Discord | The Hub</title>
+  <meta name="theme-color" content="#0b0e14">
+  <title>Личный профиль | The Hub Unified App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Cinzel:wght@700;900&family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@700;900&family=Playfair+Display:wght@700;900&family=Press+Start+2P&family=Russo+One&display=swap" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: var(--tg-theme-bg-color, #0e1217);
-      --secondary-bg: var(--tg-theme-secondary-bg-color, #161b22);
-      --text-color: var(--tg-theme-text-color, #ffffff);
-      --hint-color: var(--tg-theme-hint-color, #8b949e);
-      --accent-color: var(--tg-theme-button-color, #5865f2);
-      --card-bg: rgba(255, 255, 255, 0.04);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-hover: rgba(255, 255, 255, 0.09);
-      --card-active: rgba(88, 101, 242, 0.25);
+      --bg-base: var(--tg-theme-bg-color, #0b0e14);
+      --bg-elevated: var(--tg-theme-secondary-bg-color, #131822);
+      --surface: rgba(20, 26, 38, 0.82);
+      --surface-soft: rgba(255, 255, 255, 0.04);
+      --border-subtle: rgba(255, 255, 255, 0.10);
+      --text-main: var(--tg-theme-text-color, #f4f7fb);
+      --text-muted: var(--tg-theme-hint-color, #94a3b8);
+      --accent: #5865f2;
+      --faction-color: #FFC47C;
+      --radius-lg: 18px;
+      --radius-md: 14px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; flex-direction: column; padding: 16px 14px 24px; overflow-x: hidden; }
-    header { text-align: center; margin-bottom: 14px; }
-    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: rgba(88, 101, 242, 0.15); border: 1px solid rgba(88, 101, 242, 0.3); color: #7289da; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #5865f2; box-shadow: 0 0 8px #5865f2; }
-    h1 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-    p.subtitle { font-size: 13px; color: var(--hint-color); }
-    /* Переключатели опций: Спойлер и Анонимно */
-    .options-container {
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--faction-color) 18%, transparent), transparent 44%),
+        radial-gradient(circle at 88% 18%, rgba(88, 101, 242, 0.14), transparent 48%),
+        radial-gradient(circle at 50% 95%, rgba(15, 23, 42, 0.85), transparent 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 14px 14px 28px;
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 820px;
       display: flex;
       flex-direction: column;
-      margin-bottom: 14px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 2px 14px;
+      gap: 14px;
     }
-    .toggle-option {
+
+    /* Верхняя техническая полоса */
+    .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hub-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(88, 101, 242, 0.14);
+      border: 1px solid rgba(88, 101, 242, 0.35);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: #a5b4fc;
+    }
+
+    .hub-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-select {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      background: var(--surface-soft);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      border-radius: 10px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+    .icon-btn:hover { background: rgba(255, 255, 255, 0.09); }
+    .icon-btn:active { transform: scale(0.97); }
+
+    /* Баннер для несинхронизированного пользователя Telegram */
+    .unlinked-banner {
+      display: none;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #fde68a;
+    }
+    .unlinked-banner.visible { display: block; }
+    .unlinked-banner strong { color: #ffffff; }
+
+    /* === ВЕРХНИЙ РЯД ПО СХЕМЕ: [УРОВЕНЬ + РАМКА] | [ИМЯ (ШРИФТ) + ФРАКЦИЯ] === */
+    .profile-header-card {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 18px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-header-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(125deg, color-mix(in srgb, var(--faction-color) 10%, transparent), transparent 45%);
+    }
+
+    /* Квадрат уровня профиля + Кастомная рамка */
+    .level-box-trigger {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       user-select: none;
+      transition: transform 0.16s ease, box-shadow 0.2s ease;
+      background: #101521;
+      z-index: 1;
     }
-    .toggle-option:not(:last-child) {
-      border-bottom: 1px solid var(--card-border);
+    .level-box-trigger:hover { transform: translateY(-2px); }
+    .level-box-trigger:active { transform: scale(0.97); }
+
+    .level-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1px;
     }
-    .toggle-label {
+
+    .level-number {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1px;
+      background: linear-gradient(180deg, #ffffff 30%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .level-xp-wrap {
+      width: 78%;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: center;
+    }
+
+    .level-xp-bar {
+      width: 100%;
+      height: 5px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .level-xp-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--faction-color));
+      transition: width 0.35s ease;
+    }
+
+    .level-xp-text {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .frame-edit-chip {
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e2e8f0;
+      font-size: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    /* 7 Кастомных рамок профиля */
+    .frame-default {
+      border: 2px solid rgba(148, 163, 184, 0.45);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 8px 20px rgba(0, 0, 0, 0.45);
+    }
+    .frame-neon {
+      border: 2.5px solid #38bdf8;
+      background: linear-gradient(145deg, #0c1428, #190e33);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.5), inset 0 0 14px rgba(168, 85, 247, 0.35);
+    }
+    .frame-gold {
+      border: 3px double #fbbf24;
+      background: linear-gradient(145deg, #241b09, #120e07);
+      box-shadow: 0 0 22px rgba(251, 191, 36, 0.45), inset 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+    .frame-phoxis {
+      border: 2.5px solid #FFC47C;
+      background: linear-gradient(145deg, #251a11, #130e10);
+      box-shadow: 0 0 20px rgba(255, 196, 124, 0.48), inset 0 0 14px rgba(255, 196, 124, 0.22);
+    }
+    .frame-drakaris {
+      border: 2.5px solid #e11d48;
+      background: linear-gradient(145deg, #280c14, #14090c);
+      box-shadow: 0 0 20px rgba(225, 29, 72, 0.5), inset 0 0 14px rgba(249, 115, 22, 0.25);
+    }
+    .frame-ktolhun {
+      border: 2.5px solid #575EF3;
+      background: linear-gradient(145deg, #101433, #0a0c1d);
+      box-shadow: 0 0 22px rgba(87, 94, 243, 0.55), inset 0 0 14px rgba(139, 92, 246, 0.28);
+    }
+    .frame-terria {
+      border: 2.5px solid #02B4B4;
+      background: linear-gradient(145deg, #0b2424, #081316);
+      box-shadow: 0 0 20px rgba(2, 180, 180, 0.48), inset 0 0 14px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Правая часть шапки: ИМЯ (с шрифтом) + Блок Фракции */
+    .identity-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+      z-index: 1;
+    }
+
+    .name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .player-name {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #ffffff;
+      word-break: break-word;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 7 Вариантов шрифтов для оформления */
+    .font-default { font-family: 'Inter', sans-serif; letter-spacing: -0.3px; }
+    .font-cyber { font-family: 'Orbitron', sans-serif; letter-spacing: 0.6px; text-transform: uppercase; font-size: 23px; }
+    .font-royal { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0.8px; }
+    .font-pixel { font-family: 'Press Start 2P', monospace; font-size: 17px; line-height: 1.4; }
+    .font-strike { font-family: 'Russo One', Impact, sans-serif; letter-spacing: 0.5px; }
+    .font-script { font-family: 'Caveat', cursive; font-size: 33px; line-height: 1; }
+    .font-gothic { font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 27px; }
+
+    .sync-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #86efac;
+      white-space: nowrap;
+    }
+    .sync-tag.unlinked {
+      background: rgba(148, 163, 184, 0.12);
+      border-color: rgba(148, 163, 184, 0.3);
+      color: #cbd5e1;
+    }
+
+    /* Прямоугольный блок фракции под именем (по схеме: "название фракции и значок") */
+    .faction-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--faction-color) 18%, rgba(15, 23, 42, 0.9)), rgba(255, 255, 255, 0.03));
+      border: 1px solid color-mix(in srgb, var(--faction-color) 55%, rgba(255, 255, 255, 0.1));
+    }
+
+    .faction-left {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .toggle-icon {
-      font-size: 18px;
+
+    .faction-emblem {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: color-mix(in srgb, var(--faction-color) 20%, #0f172a);
+      border: 1px solid color-mix(in srgb, var(--faction-color) 50%, transparent);
+    }
+
+    .faction-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.2px;
+    }
+
+    .faction-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .faction-tier-badge {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #0b0e14;
+      background: var(--faction-color);
+      white-space: nowrap;
+    }
+
+    /* === ОСНОВНАЯ НИЖНЯЯ СЕТКА ПО СХЕМЕ: СЛЕВА [ЛИЧНЫЕ/ОБЩИЕ ОЧКИ] | СПРАВА [ВИТРИНА 6 СЛОТОВ] === */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 600px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .level-box-trigger {
+        width: 98px;
+        height: 98px;
+      }
+      .level-number { font-size: 32px; }
+      .player-name { font-size: 22px; }
+      .font-cyber { font-size: 19px; }
+      .font-pixel { font-size: 14px; }
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-card {
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 15px;
+    }
+
+    .card-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Блок "150 / 1500": личные очки / общие очки фракции */
+    .faction-points-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .ratio-display {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 10px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ratio-personal {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--faction-color);
       line-height: 1;
     }
-    .toggle-text {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-color);
+
+    .ratio-slash {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-muted);
     }
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 26px;
-      flex-shrink: 0;
+
+    .ratio-total {
+      font-size: 22px;
+      font-weight: 800;
+      color: #e2e8f0;
+      line-height: 1;
     }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
+
+    .ratio-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      text-align: center;
     }
-    .slider {
-      position: absolute;
+
+    .legend-item {
+      background: var(--surface-soft);
+      border-radius: 10px;
+      padding: 7px 6px;
+    }
+    .legend-item-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+    .legend-item-val {
+      font-size: 13px;
+      font-weight: 800;
+      margin-top: 2px;
+      color: #ffffff;
+    }
+
+    .contrib-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .contrib-bar {
+      width: 100%;
+      height: 7px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.09);
+      overflow: hidden;
+    }
+    .contrib-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--faction-color), #ffffff);
+      border-radius: 99px;
+      transition: width 0.35s ease;
+    }
+    .contrib-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Панель кастомизации профиля */
+    .style-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--surface-soft);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(255, 255, 255, 0.12);
-      transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 26px;
-      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
     }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 2px;
-      bottom: 2px;
-      background-color: #ffffff;
-      transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.22);
     }
-    .switch input:checked + .slider {
-      background-color: var(--accent-color);
-      border-color: var(--accent-color);
+    .action-btn:active { transform: scale(0.98); }
+
+    .action-btn-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
     }
-    .switch input:checked + .slider:before {
-      transform: translateX(18px);
+
+    .save-btn {
+      margin-top: 2px;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #5865f2, #4f46e5);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      box-shadow: 0 6px 18px rgba(88, 101, 242, 0.35);
+      transition: transform 0.12s ease, opacity 0.15s ease;
     }
-    /* Сетка категорий */
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; }
-    
-    .category-btn { position: relative; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 12px; color: var(--text-color); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; min-height: 80px; transition: all 0.12s ease; overflow: hidden; outline: none; }
-    .category-btn::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); opacity: 0; transition: opacity 0.2s ease; }
-    .category-btn:hover { background: var(--card-hover); border-color: rgba(255, 255, 255, 0.15); }
-    .category-btn:hover::before { opacity: 1; }
-    .category-btn:active { transform: scale(0.96); background: var(--card-active); border-color: #5865f2; }
-    
-    .icon-wrapper { font-size: 26px; margin-bottom: 6px; line-height: 1; }
-    .category-name { font-size: 14px; font-weight: 600; line-height: 1.25; color: #f0f3f6; }
-    .category-desc { font-size: 11px; color: var(--hint-color); margin-top: 2px; line-height: 1.2; }
-    
-    .btn-nsfw { border-color: rgba(237, 66, 69, 0.2); background: rgba(237, 66, 69, 0.05); }
-    .btn-nsfw:hover { border-color: rgba(237, 66, 69, 0.4); background: rgba(237, 66, 69, 0.1); }
-    .btn-nsfw:active { background: rgba(237, 66, 69, 0.25); border-color: #ed4245; }
-    .btn-nsfw .category-desc { color: #e06c75; }
+    .save-btn:hover { opacity: 0.94; }
+    .save-btn:active { transform: scale(0.98); }
+
+    /* === БОЛЬШОЕ ВЕРТИКАЛЬНОЕ ОКНО ВИТРИНЫ ДОСТИЖЕНИЙ (ДО 6 СЛОТОВ) === */
+    .showcase-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 360px;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    @media (max-width: 440px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ach-slot {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      background: rgba(15, 20, 30, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 104px;
+      cursor: pointer;
+      transition: transform 0.14s ease, border-color 0.15s ease, background 0.15s ease;
+      text-align: left;
+    }
+    .ach-slot:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .ach-slot.empty {
+      border-style: dashed;
+      border-color: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.02);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .ach-slot.rarity-common { border-left: 3px solid #94a3b8; }
+    .ach-slot.rarity-rare { border-left: 3px solid #3b82f6; box-shadow: inset 0 0 16px rgba(59, 130, 246, 0.08); }
+    .ach-slot.rarity-ultrarare { border-left: 3px solid #a855f7; box-shadow: inset 0 0 18px rgba(168, 85, 247, 0.12); }
+    .ach-slot.rarity-epochal { border-left: 3px solid #f59e0b; box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.14); }
+
+    .ach-slot-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ach-icon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 18px;
+    }
+
+    .ach-reward-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      white-space: nowrap;
+    }
+
+    .ach-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.25;
+    }
+
+    .ach-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .ach-rarity-line {
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .empty-plus {
+      font-size: 20px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 2px;
+    }
+    .empty-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    /* === МОДАЛЬНЫЕ ОКНА (РАМКИ, ШРИФТЫ, ВЫБОР ДОСТИЖЕНИЯ В СЛОТ) === */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 13, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-panel {
+      width: 100%;
+      max-width: 480px;
+      max-height: 84vh;
+      background: #131824;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+    }
+
+    .modal-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title { font-size: 15px; font-weight: 800; }
+    .modal-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #ffffff;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 14px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .picker-option {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 11px;
+      cursor: pointer;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .picker-option:hover { background: rgba(255, 255, 255, 0.08); }
+    .picker-option.selected {
+      border-color: #5865f2;
+      background: rgba(88, 101, 242, 0.18);
+    }
+
+    .frame-swatch {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ach-list-item {
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--text-main);
+      text-align: left;
+      width: 100%;
+    }
+    .ach-list-item:hover { background: rgba(255, 255, 255, 0.09); }
+    .ach-list-item.in-use {
+      border-color: rgba(88, 101, 242, 0.6);
+      background: rgba(88, 101, 242, 0.14);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="badge"><span class="badge-dot"></span>The Hub Bridge</div>
-    <h1>Выберите категорию</h1>
-    <p class="subtitle">Куда отправить медиа на сервере Discord?</p>
-  </header>
-  <!-- Блок тумблеров опций -->
-  <div class="options-container">
-    <label class="toggle-option" for="opt-blur">
-      <div class="toggle-label">
-        <span class="toggle-icon">👁️</span>
-        <span class="toggle-text">Скрыть под спойлер</span>
+  <div class="app-shell">
+    <!-- Верхняя полоса -->
+    <div class="top-bar">
+      <div class="hub-pill">
+        <span class="hub-pill-dot"></span>
+        <span>The Hub • Unified Profile</span>
       </div>
-      <div class="switch">
-        <input type="checkbox" id="opt-blur">
-        <span class="slider"></span>
+      <div class="top-controls">
+        <select id="profileSwitcher" class="profile-select" title="Выбор профиля из базы"></select>
       </div>
-    </label>
-    <label class="toggle-option" for="opt-anon">
-      <div class="toggle-label">
-        <span class="toggle-icon">🕵️</span>
-        <span class="toggle-text">Анонимно</span>
+    </div>
+
+    <div id="unlinkedBanner" class="unlinked-banner">
+      ⚠️ Твой Telegram ещё не связан с Discord. Напиши <strong>/привязать_тг</strong> на сервере Discord The Hub и отправь код боту! Ниже показан предпросмотр профиля.
+    </div>
+
+    <!-- ВЕРХНИЙ БЛОК (УРОВЕНЬ + РАМКА | ИМЯ + ШРИФТ + ФРАКЦИЯ) -->
+    <section class="profile-header-card">
+      <button type="button" id="levelBoxBtn" class="level-box-trigger frame-default" title="Выбрать кастомную рамку профиля">
+        <span class="level-label">Уровень</span>
+        <span id="profileLevel" class="level-number">1</span>
+        <div class="level-xp-wrap">
+          <div class="level-xp-bar">
+            <div id="levelXpFill" class="level-xp-fill" style="width: 0%"></div>
+          </div>
+          <span id="levelXpText" class="level-xp-text">0 / 50 XP</span>
+        </div>
+        <span class="frame-edit-chip">🖼 Рамка</span>
+      </button>
+
+      <div class="identity-stack">
+        <div class="name-row">
+          <h1 id="playerName" class="player-name font-default">Игрок</h1>
+          <span id="syncStatusPill" class="sync-tag">Discord ⇄ Telegram</span>
+        </div>
+
+        <div class="faction-banner">
+          <div class="faction-left">
+            <div id="factionEmblem" class="faction-emblem">🛡</div>
+            <div>
+              <div id="factionName" class="faction-title">Без фракции</div>
+              <div id="factionSub" class="faction-subtitle">Единый профиль сезона</div>
+            </div>
+          </div>
+          <span id="factionTierBadge" class="faction-tier-badge">Тир 0</span>
+        </div>
       </div>
-      <div class="switch">
-        <input type="checkbox" id="opt-anon">
-        <span class="slider"></span>
+    </section>
+
+    <!-- НИЖНИЙ БЛОК: ЛЕВАЯ КОЛОНКА [ЛИЧНЫЕ/ОБЩИЕ ОЧКИ + ОФОРМЛЕНИЕ] | ПРАВАЯ [ВИТРИНА 6 СЛОТОВ] -->
+    <section class="main-grid">
+      <div class="left-column">
+        <!-- Личные очки / Общие очки фракции (пример 150 / 1500) -->
+        <div class="panel-card faction-points-box">
+          <div class="card-kicker">
+            <span>Очки фракции</span>
+            <span id="pointsPercent">0%</span>
+          </div>
+
+          <div class="ratio-display">
+            <span id="personalPts" class="ratio-personal">0</span>
+            <span class="ratio-slash">/</span>
+            <span id="factionTotalPts" class="ratio-total">0</span>
+          </div>
+
+          <div class="ratio-legend">
+            <div class="legend-item">
+              <div class="legend-item-title">Внесено лично</div>
+              <div id="legendPersonal" class="legend-item-val">0 ОФ</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-item-title">Всего у фракции</div>
+              <div id="legendTotal" class="legend-item-val">0 ОФ</div>
+            </div>
+          </div>
+
+          <div class="contrib-bar-wrap">
+            <div class="contrib-bar">
+              <div id="contribFill" class="contrib-fill" style="width: 0%"></div>
+            </div>
+            <div class="contrib-caption">
+              <span>Личный вклад</span>
+              <span id="unlockedSummary">0 достижений</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Настройки кастомного оформления -->
+        <div class="panel-card style-controls">
+          <div class="card-kicker"><span>Оформление профиля</span></div>
+
+          <button type="button" id="openFrameModalBtn" class="action-btn">
+            <span>🖼 Рамка профиля</span>
+            <span id="activeFrameLabel" class="action-btn-sub">Базовая</span>
+          </button>
+
+          <button type="button" id="openFontModalBtn" class="action-btn">
+            <span>🔤 Шрифт имени</span>
+            <span id="activeFontLabel" class="action-btn-sub">Modern</span>
+          </button>
+
+          <button type="button" id="saveProfileBtn" class="save-btn">
+            <span>💾 Сохранить оформление</span>
+          </button>
+        </div>
       </div>
-    </label>
+
+      <!-- Витрина достижений (6 слотов) -->
+      <div class="panel-card showcase-card">
+        <div class="card-kicker">
+          <span>🏆 Витрина достижений</span>
+          <span id="showcaseCounter">0 / 6 слотов</span>
+        </div>
+
+        <div id="showcaseGrid" class="showcase-grid"></div>
+      </div>
+    </section>
   </div>
-  <main class="grid">
-    <button class="category-btn" onclick="sendCategory('selfie')">
-      <div class="icon-wrapper">📸</div>
-      <div><div class="category-name">Сэлфи</div><div class="category-desc">├・🔥・сэлфи</div></div>
-    </button>
-    <button class="category-btn" onclick="sendCategory('meme')">
-      <div class="icon-wrapper">🎭</div>
-      <div><div class="category-name">Мем</div><div class="category-desc">╭・💿・меморий</div></div>
-    </button>
-    <button class="category-btn" onclick="sendCategory('pics')">
-      <div class="icon-wrapper">🖼️</div>
-      <div><div class="category-name">Картинки</div><div class="category-desc">├・👹・скрины</div></div>
-    </button>
-    <button class="category-btn" onclick="sendCategory('photo')">
-      <div class="icon-wrapper">📷</div>
-      <div><div class="category-name">Ваши фото</div><div class="category-desc">├・🌄・фотографии</div></div>
-    </button>
-    <button class="category-btn" onclick="sendCategory('other')">
-      <div class="icon-wrapper">💬</div>
-      <div><div class="category-name">Другое</div><div class="category-desc">Главный чат Хаба</div></div>
-    </button>
-    <button class="category-btn" onclick="sendCategory('art')">
-      <div class="icon-wrapper">🎨</div>
-      <div><div class="category-name">Личное творчество</div><div class="category-desc">├・🖌️・творчество</div></div>
-    </button>
-    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfwm')">
-      <div class="icon-wrapper">🙎‍♂️</div>
-      <div><div class="category-name">Парни (18+)</div><div class="category-desc">18+ контент</div></div>
-    </button>
-    <button class="category-btn btn-nsfw" onclick="sendCategory('nsfwf')">
-      <div class="icon-wrapper">🙍‍♀️</div>
-      <div><div class="category-name">Девушки (18+)</div><div class="category-desc">18+ контент</div></div>
-    </button>
-  </main>
+
+  <!-- Модальное окно -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div id="modalTitle" class="modal-title">Настройка</div>
+        <button type="button" id="modalCloseBtn" class="modal-close">✕</button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
   <script>
-    const tg = window.Telegram?.WebApp;
+    /* __HUB_DB_START__ */
+    window.__HUB_DB__ = {"generated_at":"2026-11-14T16:00:46.009496+00:00","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":190,"current_tier":0,"icon":"🦊","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id":"6362767585","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_color":"#FFC47C","faction_tier":0,"faction_points_contributed":190,"faction_total_points":190,"unlocked_count":10,"level":9,"total_xp":440,"xp_current":40,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love","u1_silence_guard"],"unlocked_achievements":[{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"🎙","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"💬","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🧭","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"💬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🎙","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🎙","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id":"898536995","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"🎙","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id":"1262442288","is_linked":true,"username":"Саша","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🎙","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id":null,"is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🎙","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"👑","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🎙","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🎙","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"🎙","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎙","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"🧭","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
+    /* __HUB_DB_END__ */
+  </script>
+
+  <script>
+    const FRAMES = [
+      { id: "default", name: "Базовая Hub", cls: "frame-default" },
+      { id: "neon", name: "Неон Кибер", cls: "frame-neon" },
+      { id: "gold", name: "Наследник Золота", cls: "frame-gold" },
+      { id: "phoxis", name: "Дух Phoxis", cls: "frame-phoxis" },
+      { id: "drakaris", name: "Пламя Drakaris", cls: "frame-drakaris" },
+      { id: "ktolhun", name: "Бездна Ktolhun", cls: "frame-ktolhun" },
+      { id: "terria", name: "Изумруд Terria", cls: "frame-terria" }
+    ];
+
+    const FONTS = [
+      { id: "default", name: "Modern Hub", cls: "font-default" },
+      { id: "cyber", name: "Киберпанк", cls: "font-cyber" },
+      { id: "royal", name: "Королевский", cls: "font-royal" },
+      { id: "pixel", name: "Ретро Пиксель", cls: "font-pixel" },
+      { id: "strike", name: "Ударный", cls: "font-strike" },
+      { id: "script", name: "Рукописный", cls: "font-script" },
+      { id: "gothic", name: "Благородный", cls: "font-gothic" }
+    ];
+
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
-      tg.ready();
-      tg.expand();
-      if (tg.setHeaderColor) tg.setHeaderColor('#0e1217');
-      if (tg.setBackgroundColor) tg.setBackgroundColor('#0e1217');
-    }
-    function sendCategory(safeCategoryName) {
-      if (tg && tg.HapticFeedback) {
-        try { tg.HapticFeedback.impactOccurred('medium'); } catch (e) {}
-      }
-      // 1. Считываем состояния чекбоксов (1 если включено, 0 если выключено)
-      const isBlur = document.getElementById('opt-blur')?.checked ? '1' : '0';
-      const isAnon = document.getElementById('opt-anon')?.checked ? '1' : '0';
-      // 2. Формируем payload: cat_<category>_<isBlur>_<isAnon>
-      const payload = 'cat_' + safeCategoryName + '_' + isBlur + '_' + isAnon;
       try {
-        if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(payload);
+        tg.ready();
+        tg.expand();
+      } catch (e) {}
+    }
+
+    const db = window.__HUB_DB__ || { factions: {}, profiles: [] };
+    const profiles = Array.isArray(db.profiles) ? db.profiles : [];
+    let currentProfile = null;
+    let draftState = { frame_id: "default", font_id: "default", pinned: [] };
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    function getLocalKey(userId) {
+      return `hub_profile_style_${userId}`;
+    }
+
+    function loadProfileState(profile) {
+      const unlockedSet = new Set((profile.unlocked_achievements || []).map(a => a.id));
+      let frameId = profile.frame_id || "default";
+      let fontId = profile.font_id || "default";
+      let pinned = Array.isArray(profile.pinned_achievements) ? [...profile.pinned_achievements] : [];
+
+      try {
+        const savedRaw = localStorage.getItem(getLocalKey(profile.user_id));
+        if (savedRaw) {
+          const saved = JSON.parse(savedRaw);
+          if (saved.frame_id) frameId = saved.frame_id;
+          if (saved.font_id) fontId = saved.font_id;
+          if (Array.isArray(saved.pinned)) {
+            pinned = saved.pinned.filter(id => unlockedSet.has(id)).slice(0, 6);
+          }
         }
       } catch (e) {}
-      // 3. Формируем deepLink для Telegram
-      const botUsername = 'Thehub69_bot';
-      const deepLink = 'https://t.me/' + botUsername + '?start=' + payload;
-      try {
-        if (tg && typeof tg.openTelegramLink === 'function') {
-          tg.openTelegramLink(deepLink);
-        } else {
-          window.location.href = deepLink;
-        }
-      } catch (e) {
-        window.location.href = deepLink;
-      }
-      setTimeout(() => {
-        try { if (tg && typeof tg.close === 'function') tg.close(); } catch (e) {}
-      }, 150);
+
+      if (!FRAMES.some(f => f.id === frameId)) frameId = "default";
+      if (!FONTS.some(f => f.id === fontId)) fontId = "default";
+      pinned = pinned.filter(id => unlockedSet.has(id)).slice(0, 6);
+
+      draftState = { frame_id: frameId, font_id: fontId, pinned };
     }
+
+    function persistLocalState() {
+      if (!currentProfile) return;
+      try {
+        localStorage.setItem(getLocalKey(currentProfile.user_id), JSON.stringify(draftState));
+      } catch (e) {}
+    }
+
+    function renderProfile() {
+      if (!currentProfile) return;
+      const p = currentProfile;
+
+      // Фракционный акцент
+      const facColor = p.faction_color || "#5865f2";
+      document.documentElement.style.setProperty("--faction-color", facColor);
+
+      // Уровень и рамка (верхний левый квадрат)
+      const levelBox = document.getElementById("levelBoxBtn");
+      FRAMES.forEach(f => levelBox.classList.remove(f.cls));
+      const frameObj = FRAMES.find(f => f.id === draftState.frame_id) || FRAMES[0];
+      levelBox.classList.add(frameObj.cls);
+      document.getElementById("activeFrameLabel").textContent = frameObj.name;
+
+      document.getElementById("profileLevel").textContent = String(p.level || 1);
+      const xpCur = Number(p.xp_current || 0);
+      const xpNext = Math.max(1, Number(p.xp_next || 50));
+      const xpPct = Math.min(100, Math.round((xpCur / xpNext) * 100));
+      document.getElementById("levelXpFill").style.width = `${xpPct}%`;
+      document.getElementById("levelXpText").textContent = `${xpCur} / ${xpNext} XP`;
+
+      // Имя и шрифт
+      const nameEl = document.getElementById("playerName");
+      FONTS.forEach(f => nameEl.classList.remove(f.cls));
+      const fontObj = FONTS.find(f => f.id === draftState.font_id) || FONTS[0];
+      nameEl.classList.add(fontObj.cls);
+      nameEl.textContent = p.username || "Игрок";
+      document.getElementById("activeFontLabel").textContent = fontObj.name;
+
+      // Статус синхронизации
+      const syncEl = document.getElementById("syncStatusPill");
+      if (p.is_linked) {
+        syncEl.textContent = "✓ Discord ⇄ Telegram";
+        syncEl.classList.remove("unlinked");
+      } else {
+        syncEl.textContent = "Только Discord";
+        syncEl.classList.add("unlinked");
+      }
+
+      // Фракция под именем
+      document.getElementById("factionEmblem").textContent = p.faction_icon || "🛡";
+      document.getElementById("factionName").textContent = p.faction_name || "Без фракции";
+      document.getElementById("factionSub").textContent = p.is_linked
+        ? "Единый аккаунт активен"
+        : "Ожидает синхронизации TG";
+      document.getElementById("factionTierBadge").textContent = `Тир ${p.faction_tier || 0}`;
+
+      // Очки: Личные / Общие у фракции (150 / 1500)
+      const personal = Number(p.faction_points_contributed || 0);
+      const total = Math.max(personal, Number(p.faction_total_points || 0));
+      const sharePct = total > 0 ? Math.min(100, Math.round((personal / total) * 100)) : 0;
+
+      document.getElementById("personalPts").textContent = String(personal);
+      document.getElementById("factionTotalPts").textContent = String(total);
+      document.getElementById("legendPersonal").textContent = `${personal} ОФ`;
+      document.getElementById("legendTotal").textContent = `${total} ОФ`;
+      document.getElementById("pointsPercent").textContent = `${sharePct}% от фракции`;
+      document.getElementById("contribFill").style.width = `${sharePct}%`;
+      document.getElementById("unlockedSummary").textContent = `${p.unlocked_count || 0} достижений`;
+
+      // Витрина достижений (6 слотов)
+      renderShowcase();
+    }
+
+    function renderShowcase() {
+      const grid = document.getElementById("showcaseGrid");
+      grid.innerHTML = "";
+      const unlockedMap = new Map((currentProfile.unlocked_achievements || []).map(a => [a.id, a]));
+      const activeCount = draftState.pinned.filter(id => unlockedMap.has(id)).length;
+      document.getElementById("showcaseCounter").textContent = `${activeCount} / 6 слотов`;
+
+      for (let slotIdx = 0; slotIdx < 6; slotIdx++) {
+        const achId = draftState.pinned[slotIdx];
+        const ach = achId ? unlockedMap.get(achId) : null;
+        const btn = document.createElement("button");
+        btn.type = "button";
+
+        if (ach) {
+          btn.className = `ach-slot rarity-${ach.rarity || "common"}`;
+          btn.onclick = () => openSlotPickerModal(slotIdx);
+
+          const top = document.createElement("div");
+          top.className = "ach-slot-top";
+
+          const iconWrap = document.createElement("span");
+          iconWrap.className = "ach-icon-badge";
+          iconWrap.textContent = ach.icon || "🏅";
+
+          const reward = document.createElement("span");
+          reward.className = "ach-reward-pill";
+          reward.textContent = `+${ach.reward} ОФ`;
+
+          top.appendChild(iconWrap);
+          top.appendChild(reward);
+
+          const title = document.createElement("div");
+          title.className = "ach-name";
+          title.textContent = ach.name;
+
+          const desc = document.createElement("div");
+          desc.className = "ach-desc";
+          desc.textContent = ach.description;
+
+          const rarityLine = document.createElement("div");
+          rarityLine.className = "ach-rarity-line";
+          rarityLine.style.color = ach.rarity_color || "#94a3b8";
+          rarityLine.textContent = `Слот ${slotIdx + 1} • ${ach.rarity_label || "Обычное"}`;
+
+          btn.appendChild(top);
+          btn.appendChild(title);
+          btn.appendChild(desc);
+          btn.appendChild(rarityLine);
+        } else {
+          btn.className = "ach-slot empty";
+          btn.onclick = () => openSlotPickerModal(slotIdx);
+
+          const plus = document.createElement("div");
+          plus.className = "empty-plus";
+          plus.textContent = "+";
+
+          const lbl = document.createElement("div");
+          lbl.className = "empty-label";
+          lbl.textContent = `Закрепить достижение (слот ${slotIdx + 1})`;
+
+          btn.appendChild(plus);
+          btn.appendChild(lbl);
+        }
+
+        grid.appendChild(btn);
+      }
+    }
+
+    function openModal(title, renderFn) {
+      document.getElementById("modalTitle").textContent = title;
+      const body = document.getElementById("modalBody");
+      body.innerHTML = "";
+      renderFn(body);
+      document.getElementById("modalBackdrop").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("modalBackdrop").classList.remove("open");
+    }
+
+    function openFrameModal() {
+      openModal("🖼 Выбор кастомной рамки", (body) => {
+        const grid = document.createElement("div");
+        grid.className = "picker-grid";
+        FRAMES.forEach(frame => {
+          const opt = document.createElement("button");
+          opt.type = "button";
+          opt.className = `picker-option${draftState.frame_id === frame.id ? " selected" : ""}`;
+          opt.onclick = () => {
+            draftState.frame_id = frame.id;
+            persistLocalState();
+            renderProfile();
+            closeModal();
+            showToast(`Рамка «${frame.name}» выбрана`);
+          };
+
+          const swatch = document.createElement("div");
+          swatch.className = `frame-swatch ${frame.cls}`;
+          swatch.textContent = `LVL ${currentProfile.level || 1}`;
+
+          const lbl = document.createElement("div");
+          lbl.style.fontSize = "12px";
+          lbl.style.fontWeight = "700";
+          lbl.textContent = frame.name;
+
+          opt.appendChild(swatch);
+          opt.appendChild(lbl);
+          grid.appendChild(opt);
+        });
+        body.appendChild(grid);
+      });
+    }
+
+    function openFontModal() {
+      openModal("🔤 Шрифт оформления имени", (body) => {
+        const list = document.createElement("div");
+        list.style.display = "flex";
+        list.style.flexDirection = "column";
+        list.style.gap = "8px";
+        FONTS.forEach(font => {
+          const opt = document.createElement("button");
+          opt.type = "button";
+          opt.className = `ach-list-item${draftState.font_id === font.id ? " in-use" : ""}`;
+          opt.onclick = () => {
+            draftState.font_id = font.id;
+            persistLocalState();
+            renderProfile();
+            closeModal();
+            showToast(`Шрифт «${font.name}» применён`);
+          };
+
+          const preview = document.createElement("div");
+          preview.className = font.cls;
+          preview.style.fontSize = "20px";
+          preview.textContent = currentProfile.username || "Игрок";
+
+          const meta = document.createElement("span");
+          meta.style.fontSize = "11px";
+          meta.style.color = "#94a3b8";
+          meta.textContent = font.name;
+
+          opt.appendChild(preview);
+          opt.appendChild(meta);
+          list.appendChild(opt);
+        });
+        body.appendChild(list);
+      });
+    }
+
+    function openSlotPickerModal(slotIdx) {
+      const unlocked = currentProfile.unlocked_achievements || [];
+      openModal(`🏆 Витрина: слот #${slotIdx + 1}`, (body) => {
+        if (draftState.pinned[slotIdx]) {
+          const clearBtn = document.createElement("button");
+          clearBtn.type = "button";
+          clearBtn.className = "action-btn";
+          clearBtn.style.borderColor = "rgba(239, 68, 68, 0.45)";
+          clearBtn.textContent = "🗑 Убрать достижение из этого слота";
+          clearBtn.onclick = () => {
+            draftState.pinned.splice(slotIdx, 1);
+            persistLocalState();
+            renderShowcase();
+            closeModal();
+          };
+          body.appendChild(clearBtn);
+        }
+
+        if (unlocked.length === 0) {
+          const emptyInfo = document.createElement("div");
+          emptyInfo.style.fontSize = "13px";
+          emptyInfo.style.color = "#94a3b8";
+          emptyInfo.textContent = "У этого профиля пока нет открытых достижений. Открой достижения в Discord, и они появятся здесь для закрепления!";
+          body.appendChild(emptyInfo);
+          return;
+        }
+
+        unlocked.forEach(ach => {
+          const existingIdx = draftState.pinned.indexOf(ach.id);
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = `ach-list-item${existingIdx !== -1 ? " in-use" : ""}`;
+          item.onclick = () => {
+            const next = draftState.pinned.filter(id => id !== ach.id);
+            const insertAt = Math.min(slotIdx, next.length);
+            next.splice(insertAt, 0, ach.id);
+            draftState.pinned = next.slice(0, 6);
+            persistLocalState();
+            renderShowcase();
+            closeModal();
+          };
+
+          const left = document.createElement("div");
+          const title = document.createElement("div");
+          title.style.fontWeight = "800";
+          title.style.fontSize = "13px";
+          title.textContent = `${ach.icon || "🏅"} ${ach.name}`;
+          const sub = document.createElement("div");
+          sub.style.fontSize = "11px";
+          sub.style.color = "#94a3b8";
+          sub.textContent = ach.description;
+          left.appendChild(title);
+          left.appendChild(sub);
+
+          const right = document.createElement("span");
+          right.className = "ach-reward-pill";
+          right.textContent = existingIdx !== -1 ? `Слот ${existingIdx + 1}` : `+${ach.reward} ОФ`;
+
+          item.appendChild(left);
+          item.appendChild(right);
+          body.appendChild(item);
+        });
+      });
+    }
+
+    function saveProfileToBot() {
+      persistLocalState();
+      const payload = JSON.stringify({
+        action: "save_profile",
+        frame_id: draftState.frame_id,
+        font_id: draftState.font_id,
+        pinned: draftState.pinned
+      });
+      if (tg && typeof tg.sendData === "function") {
+        try {
+          tg.sendData(payload);
+          showToast("✅ Сохранено и отправлено в HUBBOT!");
+          return;
+        } catch (e) {}
+      }
+      showToast("✅ Оформление сохранено локально в профиле!");
+    }
+
+    function initApp() {
+      const switcher = document.getElementById("profileSwitcher");
+      switcher.innerHTML = "";
+
+      if (profiles.length === 0) {
+        currentProfile = {
+          user_id: "0",
+          is_linked: false,
+          username: "Гость The Hub",
+          faction_name: "Phoxis",
+          faction_icon: "🦊",
+          faction_color: "#FFC47C",
+          faction_tier: 0,
+          faction_points_contributed: 150,
+          faction_total_points: 1500,
+          unlocked_count: 0,
+          level: 1,
+          xp_current: 0,
+          xp_next: 50,
+          unlocked_achievements: []
+        };
+        const opt = document.createElement("option");
+        opt.value = "0";
+        opt.textContent = "Демо-профиль";
+        switcher.appendChild(opt);
+      } else {
+        profiles.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.user_id;
+          opt.textContent = `${p.faction_icon || "🛡"} ${p.username} (LVL ${p.level})`;
+          switcher.appendChild(opt);
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        const paramTgId = params.get("tg_id");
+        const paramDiscordId = params.get("discord_id");
+        const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+
+        let matched = null;
+        if (tgUser && tgUser.id) {
+          matched = profiles.find(p => String(p.telegram_id) === String(tgUser.id));
+          if (!matched) {
+            document.getElementById("unlinkedBanner").classList.add("visible");
+          }
+        } else if (paramTgId) {
+          matched = profiles.find(p => String(p.telegram_id) === String(paramTgId));
+        } else if (paramDiscordId) {
+          matched = profiles.find(p => String(p.user_id) === String(paramDiscordId));
+        }
+
+        currentProfile = matched || profiles[0];
+        switcher.value = currentProfile.user_id;
+      }
+
+      switcher.onchange = () => {
+        const picked = profiles.find(p => p.user_id === switcher.value);
+        if (picked) {
+          currentProfile = picked;
+          loadProfileState(currentProfile);
+          renderProfile();
+        }
+      };
+
+      document.getElementById("levelBoxBtn").onclick = openFrameModal;
+      document.getElementById("openFrameModalBtn").onclick = openFrameModal;
+      document.getElementById("openFontModalBtn").onclick = openFontModal;
+      document.getElementById("saveProfileBtn").onclick = saveProfileToBot;
+      document.getElementById("modalCloseBtn").onclick = closeModal;
+      document.getElementById("modalBackdrop").onclick = (ev) => {
+        if (ev.target === document.getElementById("modalBackdrop")) closeModal();
+      };
+
+      loadProfileState(currentProfile);
+      renderProfile();
+    }
+
+    initApp();
   </script>
 </body>
 </html>
