@@ -165,12 +165,12 @@
       background: linear-gradient(125deg, color-mix(in srgb, var(--faction-color) 10%, transparent), transparent 45%);
     }
 
-    /* Квадрат уровня профиля + Кастомная рамка */
+    /* Квадрат портрета + уровень профиля + кастомная рамка */
     .level-box-trigger {
       position: relative;
-      width: 114px;
-      height: 114px;
-      padding-bottom: 10px;
+      width: 118px;
+      height: 118px;
+      padding: 0;
       border-radius: 20px;
       display: flex;
       flex-direction: column;
@@ -185,39 +185,85 @@
     .level-box-trigger:hover { transform: translateY(-2px); }
     .level-box-trigger:active { transform: scale(0.97); }
 
-    .level-label {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.3px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 1px;
+    .portrait-media {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 17px;
+      overflow: hidden;
+      background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--faction-color) 28%, #182235), #0b101b);
     }
 
-    .level-number {
-      font-size: 38px;
+    .portrait-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .portrait-img.hidden {
+      display: none;
+    }
+
+    .portrait-fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
       font-weight: 900;
-      line-height: 1;
+      color: #e2e8f0;
+      text-transform: uppercase;
       letter-spacing: -1px;
-      background: linear-gradient(180deg, #ffffff 30%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      padding-bottom: 12px;
+    }
+    .portrait-fallback.visible {
+      display: flex;
+    }
+
+    .portrait-scrim {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(9, 12, 20, 0.25) 0%, transparent 40%, rgba(7, 10, 18, 0.92) 100%);
+    }
+
+    .portrait-lvl-pill {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      padding: 2px 7px;
+      border-radius: 8px;
+      background: rgba(9, 12, 20, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+      pointer-events: none;
     }
 
     .level-xp-wrap {
-      width: 78%;
-      margin-top: 8px;
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 10px;
       display: flex;
       flex-direction: column;
       gap: 3px;
       align-items: center;
+      pointer-events: none;
     }
 
     .level-xp-bar {
       width: 100%;
       height: 5px;
       border-radius: 99px;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.2);
       overflow: hidden;
     }
 
@@ -230,8 +276,9 @@
 
     .level-xp-text {
       font-size: 9px;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 800;
+      color: #e2e8f0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
     }
 
     .frame-edit-chip {
@@ -242,7 +289,7 @@
       padding: 2px 8px;
       border-radius: 999px;
       background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.22);
       color: #e2e8f0;
       font-size: 9px;
       font-weight: 700;
@@ -410,12 +457,10 @@
         gap: 12px;
       }
       .level-box-trigger {
-        width: 98px;
-        height: 98px;
-        padding-bottom: 10px;
+        width: 100px;
+        height: 100px;
       }
-      .level-number { font-size: 28px; }
-      .level-xp-wrap { margin-top: 4px; }
+      .portrait-fallback { font-size: 32px; }
       .player-name { font-size: 20px; }
       .font-cyber { font-size: 17px; }
       .font-pixel { font-size: 13px; }
@@ -815,6 +860,63 @@
       font-weight: 900;
     }
 
+    /* Модалка выбора портрета */
+    .portrait-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .portrait-preview-box {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b101b;
+    }
+    .portrait-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .portrait-url-row {
+      display: flex;
+      gap: 8px;
+    }
+    .portrait-input {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.3);
+      color: #ffffff;
+      font-size: 12px;
+      outline: none;
+    }
+    .portrait-input:focus {
+      border-color: #5865f2;
+    }
+    .portrait-apply-btn {
+      padding: 9px 13px;
+      border-radius: 10px;
+      border: none;
+      background: #5865f2;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
     .ach-list-item {
       padding: 11px 12px;
       border-radius: 12px;
@@ -876,18 +978,22 @@
       ⚠️ Твой Telegram ещё не связан с Discord. Напиши <strong>/привязать_тг</strong> на сервере Discord The Hub и отправь код боту! Ниже показан предпросмотр профиля.
     </div>
 
-    <!-- ВЕРХНИЙ БЛОК (УРОВЕНЬ + РАМКА | ИМЯ + ШРИФТ + ФРАКЦИЯ) -->
+    <!-- ВЕРХНИЙ БЛОК (ПОРТРЕТ + УРОВЕНЬ + РАМКА | ИМЯ + ШРИФТ + ФРАКЦИЯ) -->
     <section class="profile-header-card">
-      <button type="button" id="levelBoxBtn" class="level-box-trigger frame-default" title="Выбрать кастомную рамку профиля">
-        <span class="level-label">Уровень</span>
-        <span id="profileLevel" class="level-number">1</span>
-        <div class="level-xp-wrap">
-          <div class="level-xp-bar">
-            <div id="levelXpFill" class="level-xp-fill" style="width: 0%"></div>
+      <button type="button" id="levelBoxBtn" class="level-box-trigger frame-default" title="Настроить портрет профиля (Discord или свой)">
+        <div class="portrait-media">
+          <img id="portraitImg" class="portrait-img hidden" alt="Портрет профиля" referrerpolicy="no-referrer" />
+          <div id="portraitFallback" class="portrait-fallback visible">?</div>
+          <div class="portrait-scrim"></div>
+          <span class="portrait-lvl-pill">LVL <span id="profileLevel">1</span></span>
+          <div class="level-xp-wrap">
+            <div class="level-xp-bar">
+              <div id="levelXpFill" class="level-xp-fill" style="width: 0%"></div>
+            </div>
+            <span id="levelXpText" class="level-xp-text">0 / 50 XP</span>
           </div>
-          <span id="levelXpText" class="level-xp-text">0 / 50 XP</span>
         </div>
-        <span class="frame-edit-chip">🖼 Рамка</span>
+        <span class="frame-edit-chip">🎭 Портрет</span>
       </button>
 
       <div class="identity-stack">
@@ -951,6 +1057,11 @@
         <div class="panel-card style-controls">
           <div class="card-kicker"><span>Оформление профиля</span></div>
 
+          <button type="button" id="openPortraitModalBtn" class="action-btn">
+            <span>🎭 Портрет профиля</span>
+            <span id="activePortraitLabel" class="action-btn-sub">Discord</span>
+          </button>
+
           <button type="button" id="openFrameModalBtn" class="action-btn">
             <span>🖼 Рамка профиля</span>
             <span id="activeFrameLabel" class="action-btn-sub">Базовая</span>
@@ -994,7 +1105,7 @@
 
   <script>
     /* __HUB_DB_START__ */
-    window.__HUB_DB__ = {"generated_at":"2026-11-14T16:03:56.998754+00:00","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":190,"current_tier":0,"icon":"🦊","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id":"6362767585","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_color":"#FFC47C","faction_tier":0,"faction_points_contributed":190,"faction_total_points":190,"unlocked_count":10,"level":9,"total_xp":440,"xp_current":40,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love","u1_silence_guard"],"unlocked_achievements":[{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"💬","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🧭","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"💬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id":"898536995","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id":"1262442288","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id":null,"is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"👑","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🎧","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"🧭","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
+    window.__HUB_DB__ = {"generated_at":"2026-11-14T16:30:16.412819+00:00","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id":"6362767585","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"💬","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🧭","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"💬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id":"898536995","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id":"1262442288","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id":null,"is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"👑","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🎧","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"🧭","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
     /* __HUB_DB_END__ */
   </script>
 
@@ -1030,7 +1141,7 @@
     const db = window.__HUB_DB__ || { factions: {}, profiles: [] };
     const profiles = Array.isArray(db.profiles) ? db.profiles : [];
     let currentProfile = null;
-    let draftState = { frame_id: "default", font_id: "default", pinned: [] };
+    let draftState = { frame_id: "default", font_id: "default", pinned: [], custom_avatar_url: null };
 
     function showToast(msg) {
       const el = document.getElementById("toast");
@@ -1049,6 +1160,7 @@
       let frameId = profile.frame_id || "default";
       let fontId = profile.font_id || "default";
       let pinned = Array.isArray(profile.pinned_achievements) ? [...profile.pinned_achievements] : [];
+      let customAvatarUrl = typeof profile.custom_avatar_url === "string" ? profile.custom_avatar_url : "";
 
       try {
         const savedRaw = localStorage.getItem(getLocalKey(profile.user_id));
@@ -1056,6 +1168,7 @@
           const saved = JSON.parse(savedRaw);
           if (saved.frame_id) frameId = saved.frame_id;
           if (saved.font_id) fontId = saved.font_id;
+          if (typeof saved.custom_avatar_url === "string") customAvatarUrl = saved.custom_avatar_url;
           if (Array.isArray(saved.pinned)) {
             pinned = saved.pinned.filter(id => unlockedSet.has(id)).slice(0, 6);
           }
@@ -1066,7 +1179,7 @@
       if (!FONTS.some(f => f.id === fontId)) fontId = "default";
       pinned = pinned.filter(id => unlockedSet.has(id)).slice(0, 6);
 
-      draftState = { frame_id: frameId, font_id: fontId, pinned };
+      draftState = { frame_id: frameId, font_id: fontId, pinned, custom_avatar_url: customAvatarUrl };
     }
 
     function persistLocalState() {
@@ -1074,6 +1187,50 @@
       try {
         localStorage.setItem(getLocalKey(currentProfile.user_id), JSON.stringify(draftState));
       } catch (e) {}
+    }
+
+    function getActivePortraitUrl(profile) {
+      if (draftState.custom_avatar_url) return draftState.custom_avatar_url;
+      if (profile && profile.custom_avatar_url) return profile.custom_avatar_url;
+      if (profile && profile.discord_avatar_url) return profile.discord_avatar_url;
+      if (profile && profile.avatar_url) return profile.avatar_url;
+      return "";
+    }
+
+    function renderPortrait(profile) {
+      const img = document.getElementById("portraitImg");
+      const fallback = document.getElementById("portraitFallback");
+      const label = document.getElementById("activePortraitLabel");
+      const activeSrc = getActivePortraitUrl(profile);
+      const isCustom = Boolean(draftState.custom_avatar_url);
+      if (label) label.textContent = isCustom ? "Свой" : "Discord";
+
+      const initial = String((profile && profile.username) || "?").trim().charAt(0) || "?";
+      fallback.textContent = initial;
+
+      const showFallback = () => {
+        img.classList.add("hidden");
+        fallback.classList.add("visible");
+      };
+
+      if (!activeSrc) {
+        img.removeAttribute("src");
+        showFallback();
+        return;
+      }
+
+      img.onerror = () => {
+        if (isCustom && profile && profile.discord_avatar_url && img.src !== profile.discord_avatar_url) {
+          img.src = profile.discord_avatar_url;
+          return;
+        }
+        showFallback();
+      };
+      img.onload = () => {
+        img.classList.remove("hidden");
+        fallback.classList.remove("visible");
+      };
+      img.src = activeSrc;
     }
 
     function renderProfile() {
@@ -1084,12 +1241,14 @@
       const facColor = p.faction_color || "#5865f2";
       document.documentElement.style.setProperty("--faction-color", facColor);
 
-      // Уровень и рамка (верхний левый квадрат)
+      // Портрет, уровень и рамка (верхний левый квадрат)
       const levelBox = document.getElementById("levelBoxBtn");
       FRAMES.forEach(f => levelBox.classList.remove(f.cls));
       const frameObj = FRAMES.find(f => f.id === draftState.frame_id) || FRAMES[0];
       levelBox.classList.add(frameObj.cls);
       document.getElementById("activeFrameLabel").textContent = frameObj.name;
+
+      renderPortrait(p);
 
       document.getElementById("profileLevel").textContent = String(p.level || 1);
       const xpCur = Number(p.xp_current || 0);
@@ -1219,6 +1378,166 @@
 
     function closeModal() {
       document.getElementById("modalBackdrop").classList.remove("open");
+    }
+
+    function compressImageFileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("read_error"));
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = () => reject(new Error("img_error"));
+          img.onload = () => {
+            const size = 224;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+            const minSide = Math.min(img.width, img.height);
+            const sx = (img.width - minSide) / 2;
+            const sy = (img.height - minSide) / 2;
+            ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+
+            let out = canvas.toDataURL("image/webp", 0.78);
+            if (!out.startsWith("data:image/webp")) {
+              out = canvas.toDataURL("image/jpeg", 0.78);
+            }
+            resolve(out);
+          };
+          img.src = String(reader.result || "");
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function openPortraitModal() {
+      openModal("🎭 Портрет профиля", (body) => {
+        const isCustom = Boolean(draftState.custom_avatar_url);
+        const frameObj = FRAMES.find(f => f.id === draftState.frame_id) || FRAMES[0];
+        const previewSrc = getActivePortraitUrl(currentProfile);
+
+        const prevRow = document.createElement("div");
+        prevRow.className = "portrait-preview-row";
+
+        const prevBox = document.createElement("div");
+        prevBox.className = `portrait-preview-box ${frameObj.cls}`;
+        if (previewSrc) {
+          const pImg = document.createElement("img");
+          pImg.src = previewSrc;
+          pImg.alt = "Предпросмотр портрета";
+          prevBox.appendChild(pImg);
+        } else {
+          prevBox.textContent = String(currentProfile.username || "?").charAt(0).toUpperCase();
+        }
+
+        const prevInfo = document.createElement("div");
+        prevInfo.style.display = "flex";
+        prevInfo.style.flexDirection = "column";
+        prevInfo.style.gap = "4px";
+
+        const prevTitle = document.createElement("div");
+        prevTitle.style.fontWeight = "800";
+        prevTitle.style.fontSize = "13px";
+        prevTitle.textContent = isCustom ? "Используется свой портрет" : "Используется аватарка Discord";
+
+        const prevSub = document.createElement("div");
+        prevSub.style.fontSize = "11px";
+        prevSub.style.color = "#94a3b8";
+        prevSub.textContent = "По умолчанию сюда автоматически подгружается аватар из Discord.";
+
+        prevInfo.appendChild(prevTitle);
+        prevInfo.appendChild(prevSub);
+        prevRow.appendChild(prevBox);
+        prevRow.appendChild(prevInfo);
+        body.appendChild(prevRow);
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.style.display = "none";
+        fileInput.onchange = async () => {
+          const file = fileInput.files && fileInput.files[0];
+          if (!file) return;
+          try {
+            const dataUrl = await compressImageFileToDataUrl(file);
+            draftState.custom_avatar_url = dataUrl;
+            persistLocalState();
+            renderProfile();
+            closeModal();
+            showToast("🎭 Свой портрет загружен!");
+          } catch (err) {
+            showToast("❌ Не удалось обработать изображение");
+          }
+        };
+        body.appendChild(fileInput);
+
+        const uploadBtn = document.createElement("button");
+        uploadBtn.type = "button";
+        uploadBtn.className = "action-btn";
+        uploadBtn.innerHTML = '<span>📁 Загрузить фото с устройства</span><span class="action-btn-sub">PNG / JPG / WebP</span>';
+        uploadBtn.onclick = () => fileInput.click();
+        body.appendChild(uploadBtn);
+
+        const urlLabel = document.createElement("div");
+        urlLabel.style.fontSize = "11px";
+        urlLabel.style.fontWeight = "700";
+        urlLabel.style.color = "#94a3b8";
+        urlLabel.textContent = "Или вставь прямую ссылку (URL) на картинку:";
+        body.appendChild(urlLabel);
+
+        const urlRow = document.createElement("div");
+        urlRow.className = "portrait-url-row";
+
+        const urlInput = document.createElement("input");
+        urlInput.type = "url";
+        urlInput.className = "portrait-input";
+        urlInput.placeholder = "https://example.com/portrait.png";
+        if (draftState.custom_avatar_url && /^https?:\/\//i.test(draftState.custom_avatar_url)) {
+          urlInput.value = draftState.custom_avatar_url;
+        }
+
+        const applyUrlBtn = document.createElement("button");
+        applyUrlBtn.type = "button";
+        applyUrlBtn.className = "portrait-apply-btn";
+        applyUrlBtn.textContent = "Применить";
+        applyUrlBtn.onclick = () => {
+          const val = urlInput.value.trim();
+          if (!/^https?:\/\/.+/i.test(val)) {
+            showToast("⚠️ Укажи ссылку, начинающуюся с https://");
+            return;
+          }
+          draftState.custom_avatar_url = val;
+          persistLocalState();
+          renderProfile();
+          closeModal();
+          showToast("🎭 Портрет по ссылке установлен!");
+        };
+
+        urlRow.appendChild(urlInput);
+        urlRow.appendChild(applyUrlBtn);
+        body.appendChild(urlRow);
+
+        const resetBtn = document.createElement("button");
+        resetBtn.type = "button";
+        resetBtn.className = "action-btn";
+        resetBtn.style.borderColor = "rgba(88, 101, 242, 0.45)";
+        resetBtn.innerHTML = '<span>👾 Вернуть аватарку из Discord</span><span class="action-btn-sub">По умолчанию</span>';
+        resetBtn.onclick = () => {
+          draftState.custom_avatar_url = "";
+          persistLocalState();
+          renderProfile();
+          closeModal();
+          showToast("👾 Восстановлена аватарка Discord");
+        };
+        body.appendChild(resetBtn);
+
+        const openFrameSwitch = document.createElement("button");
+        openFrameSwitch.type = "button";
+        openFrameSwitch.className = "action-btn";
+        openFrameSwitch.innerHTML = `<span>🖼 Сменить рамку портрета</span><span class="action-btn-sub">${frameObj.name}</span>`;
+        openFrameSwitch.onclick = () => openFrameModal();
+        body.appendChild(openFrameSwitch);
+      });
     }
 
     function openFrameModal() {
@@ -1357,12 +1676,21 @@
 
     function saveProfileToBot() {
       persistLocalState();
-      const payload = JSON.stringify({
+      const basePayload = {
         action: "save_profile",
         frame_id: draftState.frame_id,
         font_id: draftState.font_id,
         pinned: draftState.pinned
-      });
+      };
+      if (draftState.custom_avatar_url === "" || /^https?:\/\//i.test(draftState.custom_avatar_url || "")) {
+        basePayload.custom_avatar_url = draftState.custom_avatar_url || "";
+      } else if (draftState.custom_avatar_url) {
+        const candidate = JSON.stringify({ ...basePayload, custom_avatar_url: draftState.custom_avatar_url });
+        if (candidate.length <= 3900) {
+          basePayload.custom_avatar_url = draftState.custom_avatar_url;
+        }
+      }
+      const payload = JSON.stringify(basePayload);
       if (tg && typeof tg.sendData === "function") {
         try {
           tg.sendData(payload);
@@ -1371,6 +1699,44 @@
         } catch (e) {}
       }
       showToast("✅ Оформление сохранено локально в профиле!");
+    }
+
+    function initDiscordActivity() {
+      const params = new URLSearchParams(window.location.search);
+      const frameId = params.get("frame_id");
+      const isDiscordFrame = Boolean(frameId) || window.location.hostname.endsWith("discordsays.com");
+      if (!isDiscordFrame || window.parent === window) return;
+
+      window.addEventListener("message", (event) => {
+        try {
+          const msg = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+          const payload = Array.isArray(msg) && msg.length >= 2 ? msg[1] : msg;
+          if (payload && payload.evt === "READY" && payload.data && payload.data.user) {
+            const dUid = String(payload.data.user.id || "");
+            if (dUid && profiles.length) {
+              const found = profiles.find(p => String(p.user_id) === dUid);
+              if (found && (!currentProfile || currentProfile.user_id !== found.user_id)) {
+                currentProfile = found;
+                const sw = document.getElementById("profileSwitcher");
+                if (sw) sw.value = found.user_id;
+                loadProfileState(currentProfile);
+                renderProfile();
+              }
+            }
+          }
+        } catch (e) {}
+      });
+
+      if (frameId) {
+        try {
+          window.parent.postMessage([0, {
+            v: 1,
+            encoding: "json",
+            client_id: "1536756841823076485",
+            frame_id: frameId
+          }], "*");
+        } catch (e) {}
+      }
     }
 
     function initApp() {
@@ -1392,6 +1758,8 @@
           level: 1,
           xp_current: 0,
           xp_next: 50,
+          discord_avatar_url: "",
+          custom_avatar_url: "",
           unlocked_achievements: []
         };
         const opt = document.createElement("option");
@@ -1436,7 +1804,8 @@
         }
       };
 
-      document.getElementById("levelBoxBtn").onclick = openFrameModal;
+      document.getElementById("levelBoxBtn").onclick = openPortraitModal;
+      document.getElementById("openPortraitModalBtn").onclick = openPortraitModal;
       document.getElementById("openFrameModalBtn").onclick = openFrameModal;
       document.getElementById("openFontModalBtn").onclick = openFontModal;
       document.getElementById("saveProfileBtn").onclick = saveProfileToBot;
@@ -1447,6 +1816,7 @@
 
       loadProfileState(currentProfile);
       renderProfile();
+      initDiscordActivity();
     }
 
     initApp();
