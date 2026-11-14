@@ -7,7 +7,7 @@
   <title>Личный профиль | The Hub Unified App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Cormorant+SC:wght@600;700&family=Fira+Sans:wght@400;500;600;700;800&family=Orbitron:wght@700;900&family=Playfair+Display:wght@700;900&family=Press+Start+2P&family=Russo+One&family=Spectral:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:wght@600;700&family=Cormorant+SC:wght@600;700&family=Exo+2:wght@500;600;700;800&family=Fira+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,700&family=Press+Start+2P&family=Russo+One&family=Spectral:wght@600;700;800&family=Tektur:wght@500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -20,6 +20,8 @@
       --text-muted: var(--tg-theme-hint-color, #a8b7cc);
       --accent: #5865f2;
       --faction-color: #FFC47C;
+      --font-body: 'Fira Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Spectral', 'Cormorant SC', Georgia, serif;
       --radius-lg: 16px;
       --radius-md: 13px;
     }
@@ -37,7 +39,7 @@
     }
 
     body {
-      font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-body);
       background-color: var(--bg-base);
       background-image: linear-gradient(180deg, #0d121c 0%, #090c12 100%);
       color: var(--text-main);
@@ -47,6 +49,10 @@
       justify-content: center;
       text-rendering: optimizeLegibility;
       font-feature-settings: "tnum" 1;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
     }
 
     .app-shell {
@@ -160,11 +166,21 @@
       display: none;
     }
 
+    /* Колонка портрета: LVL сверху над рамкой, чистое фото, XP-полоса под рамкой */
+    .portrait-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding-top: 9px;
+      z-index: 1;
+    }
+
     /* Квадрат портрета + уровень профиля + кастомная рамка */
     .level-box-trigger {
       position: relative;
-      width: 118px;
-      height: 118px;
+      width: 116px;
+      height: 116px;
       padding: 0;
       border-radius: 20px;
       display: flex;
@@ -205,58 +221,73 @@
       display: none;
       align-items: center;
       justify-content: center;
+      font-family: var(--font-display);
       font-size: 40px;
       font-weight: 900;
       color: #e2e8f0;
       text-transform: uppercase;
       letter-spacing: -1px;
-      padding-bottom: 12px;
     }
     .portrait-fallback.visible {
       display: flex;
     }
 
-    .portrait-scrim {
+    .portrait-hover-hint {
       position: absolute;
       inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      background: linear-gradient(180deg, transparent 55%, rgba(7, 10, 18, 0.85) 100%);
+      color: #f8fafc;
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.16s ease;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(9, 12, 20, 0.25) 0%, transparent 40%, rgba(7, 10, 18, 0.92) 100%);
+    }
+    .level-box-trigger:hover .portrait-hover-hint,
+    .level-box-trigger:focus-visible .portrait-hover-hint {
+      opacity: 1;
     }
 
     .portrait-lvl-pill {
       position: absolute;
-      top: 7px;
-      left: 7px;
-      padding: 2px 7px;
-      border-radius: 7px;
-      background: #0b0f18;
-      border: 1px solid rgba(255, 255, 255, 0.24);
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #161d2f, #090d16);
+      border: 1px solid color-mix(in srgb, var(--faction-color) 65%, rgba(255, 255, 255, 0.28));
       color: #ffffff;
-      font-size: 10px;
+      font-family: var(--font-display);
+      font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.7px;
       line-height: 1.3;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
+      white-space: nowrap;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.75);
       pointer-events: none;
+      z-index: 3;
     }
 
     .level-xp-wrap {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      bottom: 10px;
+      width: 116px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
       align-items: center;
       pointer-events: none;
     }
 
     .level-xp-bar {
       width: 100%;
-      height: 5px;
+      height: 6px;
       border-radius: 99px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       overflow: hidden;
     }
 
@@ -268,26 +299,10 @@
     }
 
     .level-xp-text {
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 800;
-      color: #e2e8f0;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-    }
-
-    .frame-edit-chip {
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: #e2e8f0;
-      font-size: 9px;
-      font-weight: 700;
-      white-space: nowrap;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+      color: var(--text-muted);
+      line-height: 1.1;
     }
 
     /* 7 Кастомных рамок профиля */
@@ -343,6 +358,29 @@
       flex-wrap: wrap;
     }
 
+    .player-name-btn {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 3px 8px;
+      margin: -3px 0 -3px -8px;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      max-width: 100%;
+    }
+    .player-name-btn:hover,
+    .player-name-btn:focus-visible {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.16);
+      outline: none;
+    }
+
     .player-name {
       font-size: 28px;
       font-weight: 800;
@@ -351,9 +389,77 @@
       word-break: break-word;
     }
 
-    /* 7 Вариантов шрифтов для оформления */
+    .name-font-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    /* 7 Вариантов шрифтов для оформления всей активности */
+    body.theme-font-default {
+      --font-body: 'Fira Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Spectral', 'Cormorant SC', Georgia, serif;
+    }
+    body.theme-font-cyber {
+      --font-body: 'Exo 2', 'Tektur', sans-serif;
+      --font-display: 'Tektur', 'Exo 2', sans-serif;
+    }
+    body.theme-font-royal {
+      --font-body: 'Cormorant Garamond', 'Spectral', Georgia, serif;
+      --font-display: 'Cormorant SC', 'Spectral', Georgia, serif;
+    }
+    body.theme-font-royal .ach-desc,
+    body.theme-font-royal .faction-subtitle,
+    body.theme-font-royal .action-btn,
+    body.theme-font-royal .legend-item-title {
+      font-size: 13.5px;
+      letter-spacing: 0.2px;
+    }
+    body.theme-font-pixel {
+      --font-body: 'Press Start 2P', monospace;
+      --font-display: 'Press Start 2P', monospace;
+    }
+    body.theme-font-pixel .app-shell { font-size: 11px; }
+    body.theme-font-pixel .ach-name { font-size: 11px; line-height: 1.45; }
+    body.theme-font-pixel .ach-desc { font-size: 9px; line-height: 1.6; }
+    body.theme-font-pixel .card-kicker,
+    body.theme-font-pixel .action-btn,
+    body.theme-font-pixel .save-btn,
+    body.theme-font-pixel .sync-tag,
+    body.theme-font-pixel .faction-subtitle { font-size: 9.5px; line-height: 1.35; }
+    body.theme-font-pixel .ratio-personal { font-size: 20px; }
+    body.theme-font-pixel .ratio-total,
+    body.theme-font-pixel .ratio-slash { font-size: 15px; }
+    body.theme-font-strike {
+      --font-body: 'Russo One', 'Exo 2', sans-serif;
+      --font-display: 'Russo One', Impact, sans-serif;
+    }
+    body.theme-font-strike .ach-desc { font-size: 11.5px; line-height: 1.45; }
+    body.theme-font-script {
+      --font-body: 'Caveat', cursive;
+      --font-display: 'Caveat', cursive;
+    }
+    body.theme-font-script .ach-name { font-size: 20px; line-height: 1.1; }
+    body.theme-font-script .ach-desc { font-size: 16px; line-height: 1.3; }
+    body.theme-font-script .faction-title { font-size: 22px; }
+    body.theme-font-script .action-btn,
+    body.theme-font-script .save-btn { font-size: 16px; }
+    body.theme-font-gothic {
+      --font-body: 'Playfair Display', Georgia, serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+    }
+
     .font-default { font-family: 'Spectral', 'Cormorant SC', Georgia, serif; letter-spacing: 0.4px; }
-    .font-cyber { font-family: 'Orbitron', sans-serif; letter-spacing: 0.6px; text-transform: uppercase; font-size: 23px; }
+    .font-cyber { font-family: 'Tektur', 'Exo 2', sans-serif; letter-spacing: 0.6px; text-transform: uppercase; font-size: 24px; }
     .font-royal { font-family: 'Cormorant SC', 'Spectral', Georgia, serif; letter-spacing: 1px; font-size: 29px; }
     .font-pixel { font-family: 'Press Start 2P', monospace; font-size: 17px; line-height: 1.4; }
     .font-strike { font-family: 'Russo One', Impact, sans-serif; letter-spacing: 0.5px; }
@@ -418,19 +524,29 @@
     }
 
     .faction-emblem {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
+      overflow: hidden;
+      flex-shrink: 0;
       background: color-mix(in srgb, var(--faction-color) 20%, #0f172a);
       border: 1px solid color-mix(in srgb, var(--faction-color) 50%, transparent);
     }
 
+    .faction-emblem-img {
+      width: 100%;
+      height: 100%;
+      padding: 4px;
+      object-fit: contain;
+      display: block;
+    }
+
     .faction-title {
-      font-family: 'Spectral', Georgia, serif;
+      font-family: var(--font-display);
       font-size: 18px;
       font-weight: 800;
       color: #ffffff;
@@ -481,8 +597,11 @@
         gap: 12px;
       }
       .level-box-trigger {
-        width: 100px;
-        height: 100px;
+        width: 98px;
+        height: 98px;
+      }
+      .level-xp-wrap {
+        width: 98px;
       }
       .portrait-fallback { font-size: 32px; }
       .player-name { font-size: 22px; }
@@ -544,6 +663,7 @@
     }
 
     .ratio-personal {
+      font-family: var(--font-display);
       font-size: 30px;
       font-weight: 900;
       color: var(--faction-color);
@@ -557,6 +677,7 @@
     }
 
     .ratio-total {
+      font-family: var(--font-display);
       font-size: 22px;
       font-weight: 800;
       color: #e2e8f0;
@@ -844,12 +965,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--rarity-color) 22%, #111827);
-      border: 1px solid color-mix(in srgb, var(--rarity-color) 62%, transparent);
-      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--rarity-color) 32%, #1e293b), #0b101b);
+      border: 1px solid color-mix(in srgb, var(--rarity-color) 70%, transparent);
+      box-shadow: 0 2px 10px color-mix(in srgb, var(--rarity-color) 28%, transparent);
+      font-size: 19px;
       flex-shrink: 0;
     }
 
@@ -865,7 +987,7 @@
     }
 
     .ach-name {
-      font-family: 'Spectral', Georgia, serif;
+      font-family: var(--font-display);
       font-size: 15px;
       font-weight: 800;
       color: #ffffff;
@@ -960,7 +1082,7 @@
       align-items: center;
       justify-content: space-between;
     }
-    .modal-title { font-family: 'Spectral', Georgia, serif; font-size: 17px; font-weight: 800; }
+    .modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 800; }
     .modal-close {
       background: rgba(255, 255, 255, 0.08);
       border: none;
@@ -1224,25 +1346,30 @@
 
     <!-- ВЕРХНИЙ БЛОК (ПОРТРЕТ + УРОВЕНЬ + РАМКА | ИМЯ + ШРИФТ + ФРАКЦИЯ) -->
     <section class="profile-header-card">
-      <button type="button" id="levelBoxBtn" class="level-box-trigger frame-default" title="Настроить портрет профиля (Discord, Telegram или свой)">
-        <div class="portrait-media">
-          <img id="portraitImg" class="portrait-img hidden" alt="Портрет профиля" referrerpolicy="no-referrer" />
-          <div id="portraitFallback" class="portrait-fallback visible">?</div>
-          <div class="portrait-scrim"></div>
-          <span class="portrait-lvl-pill">LVL <span id="profileLevel">1</span></span>
-          <div class="level-xp-wrap">
-            <div class="level-xp-bar">
-              <div id="levelXpFill" class="level-xp-fill" style="width: 0%"></div>
-            </div>
-            <span id="levelXpText" class="level-xp-text">0 / 50 XP</span>
+      <div class="portrait-column">
+        <button type="button" id="levelBoxBtn" class="level-box-trigger frame-default" title="Нажми на портрет, чтобы выбрать фото (Discord, Telegram или своё)">
+          <div class="portrait-media">
+            <img id="portraitImg" class="portrait-img hidden" alt="Портрет профиля" referrerpolicy="no-referrer" />
+            <div id="portraitFallback" class="portrait-fallback visible">?</div>
+            <span class="portrait-hover-hint">🎭 Портрет</span>
           </div>
+          <span class="portrait-lvl-pill">LVL <span id="profileLevel">1</span></span>
+        </button>
+
+        <div class="level-xp-wrap">
+          <div class="level-xp-bar">
+            <div id="levelXpFill" class="level-xp-fill" style="width: 0%"></div>
+          </div>
+          <span id="levelXpText" class="level-xp-text">0 / 50 XP</span>
         </div>
-        <span class="frame-edit-chip">🎭 Портрет</span>
-      </button>
+      </div>
 
       <div class="identity-stack">
         <div class="name-row">
-          <h1 id="playerName" class="player-name font-default">Игрок</h1>
+          <button type="button" id="playerNameBtn" class="player-name-btn" title="Нажми на имя, чтобы сменить шрифт оформления активности">
+            <h1 id="playerName" class="player-name font-default">Игрок</h1>
+            <span class="name-font-badge">🔤 <span id="activeFontLabel">Dota 2 Event</span></span>
+          </button>
           <button type="button" id="syncStatusPill" class="sync-tag" title="Нажми для синхронизации или справки о привязке Discord и Telegram">Discord = Telegram</button>
         </div>
 
@@ -1301,19 +1428,9 @@
         <div class="panel-card style-controls">
           <div class="card-kicker"><span>Оформление профиля</span></div>
 
-          <button type="button" id="openPortraitModalBtn" class="action-btn">
-            <span>🎭 Портрет профиля</span>
-            <span id="activePortraitLabel" class="action-btn-sub">Discord</span>
-          </button>
-
           <button type="button" id="openFrameModalBtn" class="action-btn">
             <span>🖼 Рамка профиля</span>
             <span id="activeFrameLabel" class="action-btn-sub">Базовая</span>
-          </button>
-
-          <button type="button" id="openFontModalBtn" class="action-btn">
-            <span>🔤 Шрифт имени</span>
-            <span id="activeFontLabel" class="action-btn-sub">Dota 2 Event</span>
           </button>
 
           <button type="button" id="saveProfileBtn" class="save-btn">
@@ -1349,7 +1466,7 @@
 
   <script>
     /* __HUB_DB_START__ */
-    window.__HUB_DB__ = {"generated_at":"2026-11-14T17:16:05.035538+00:00","bot_username":"Thehub69_bot","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id_hash":"ca2d2326e9275a810f1d61605f5d01278081127794b739fff87ad7fda6e8bef5","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","telegram_avatar_url":"data:image/webp;base64,UklGRnIMAABXRUJQVlA4IGYMAACwSgCdASq0ALQAPnk4l0ikoyIhJ9LK8JAPCWltpTBojkAfGHj/zFfLZqJyn26kAr6Q79a24FurnOvHun7YNGlzurnr+2XaII4aNEPWeea9MlQeVhMZjKNKl9Ul5abVnJv1nj9ahe5PphUgr+fAnJ+qb5kmHD1VmEvC5ycceiL/ud2hRSv+orjRhyHy6Hg7gIJwByok6ahF0HsikozKunlxC1VQ3WdldR/13NoGh2U65EvI9xkIohbZk8rgwjTPDoyUHUuXjmUDe0i7ssfGZlwNDZ0CeD4dsrQzAGupFKQbHWwrEo4KbILr7ElfOxI8rQ4wXw+mVYjH/mbnXGhwuUqRqI/Mz6AUF1UTwUluW1h3dq97uLeioVttNWyw3YfO7SLI+tTxgzwCt4YgHbtE3Y6RCr3V+fge53Vr8T3Nhg95lFPzGqKRG1U2H0RgxhRhyTVL9HbL1iWFKW8d37lPMwG74RqFnbiRLqXYADQsxNN0Sku211Lv3OgUM8VDNryOg3VorOjJJx3AyB2jdkfq5YrWi1fUbeDN95ECgXdpCxWthGuz35dNVS/ilW7fXl4H6WOTwuBIOAM17CQGB0U1rGL9Ga8d+LEH+UmENv35B+ThRTdK4oNXWJWg3iPpjRNEd11k6qo5L2jBD5mi88CGqXWGEzrs0kUESNEY0Wf1naM49TKljwdexDgHyn+YKUJ8P+ZpVyb+n9KgumCj9oSreS4wstt9CMPEMicGSZBbvYGvk1l2VMTxSOhhcvhE742dOTlftSYjw3DkQ24MQSxE43lPG4sqlu/0phYFS7vLE4AA/vh3NZE0vCQqWLIJnGPK/U10I+8wRg8/9LuvffjsM59HES0wlBA8j3CGBb8tZEBgc1RS617cpqDCCiJaEGCd7R9EE5TwNHVf0k0e2GDYXe/EFLzc1UfOyLPzMLVLCfdwdjonV1NoR5uatayC9O0TRFbU/9S4jfoJKekhR95ptiRY4ERC8G5CDy1QRNrW9QEy6pLKERzur4RNz1ahnhFJIwVUser7nZ0KSlGMVzUjsZtoERmV3rR42tZUMqxdAWXVPk16evB760dji6xMbf4bYWFoD7yswDWHFf+JKm8sGL0RHL9jZCr0WlS6L+fto3PUof5jjPYBCbLCas3weQ53KzAYH9aXnxsJYyBSI0IKSmvpHlk0AcN9aau/2qCH/vQ74veAoMCrFQ6RaGWHnOtGMfPtj3V89V88zM6tdUB+5k+9soAWiEfVmfa6iWI5zSnMuaC1ijjowoMRQ4+Bs45ak2TybMigXYyNtGHZH2cU1g9gOh+uOI23u2rYTvHeH8Au4Edk7qKPKZ+z30UhEmEHYUtwW+mu+51CS3Sq29tcBNFmsnwFLggJIm5xRtyw+0ZgPhVuDXfzH89LL65HXfRZ5QCeGRaBf488S4uo161vfmZQjSZdxG5t/fjm7HtlXNGdsNOan6VVbS6hW+06EPrpo/v2UcoNlyqkGnZZCkswy5f6r5sgRasAv+DGY+IXdrPyliitRaji7ykoSECnXSAc/UN6o7E+uHnIiLQWRRoKDUL/mWFXkXGlqjZLeo5heQcFfaozC2qptSmjfpLZyIMKTF69HCUbf5/QnMMwNPBAvcgTojEC90zC/dfJLIWsoXkfKPghlxs0w1jNnJalt/im9PZN5mdRZz4/K3+EiEi9xkVzO+kM9MxQA4V5ohB+N7dcM3JJt7Ynplx6ZAgmzAeRIxbO9VGaysVnnuLZotvloqAyFPUjXU7gsbcbBrGzUi1nkKoPb7Sh5GYQBFjmRR7nkpXJMsOa6id+qo4GwoY05tNXw5Aeq4RcivKFkNNV+OCoXp5+Nl0WxlL1QzdYutvUrwqgICHxjOJul+9AlFX9571S2d9/zFdljsDOkizzOUtadN0KGQc28vINMwbG4HpE4AhIArD2h8VbdcLcnxehM0XB7lZgeLEKJQWu8qfy/u7Eq6WRVjU6+th/yiWfNGQBTer9xY54PKLeOu7x0Ok6kdDk9OJjk9rE/5/lZAii9HQszo/ZZYu1H7T9DE+W5kDzpTaYakIrxBz/dsv2Fx189icKSm52qjz7YS/OpgcmLZ81ZSfMNbpJcMRp2L4zuc9A1Uwn81VRBWoVAzElaPq+g6Id1vrW8RNgtY7kAYSAZEjosieDF7MPcdvu8asWYkGWUwrSmEXVgUquS6VcAM838CkanbaffTn9eDcCURUahKhMgjrFc8nEsn3SmhBoVmjh8bowepHsQpdkl+/puHAjSQBN6iwE25fE/u6q8u02Z8+DiUbFiG4Qi06muj3wkLZPbovdny3SMvceihbEgXCoeCn1A1P1NRS1kNmRazq96aJk1yVArrU1y8HKBaMKTNmSb+duRLoe7VEAVErzWs/7xxXUxtUU6n+ITuC9WXOYt1UVCvRQBK5ROkEs3Ejqg5Xp9caJFjXwWRTDOcVZnuWWSsmt4QWMXdK4VWk1jsqDK3RzV0DeZtHYUxN1gpbF3j/5lBRHJxtJmI2r6vYmbCI2gP2kk2tSK5rahOZKk9Ty1r4XzzzpnfzmHrUILSkucCKawlD5XDvkFkZKHwSVIWfNZDregOX5LAtv7wHova1L9TXU06dJz1X8i1Gh5/rJ/1naaSKKWi85PNydBM4HAvX5WPX06PxI9RSeabxaVlQhOW1TWRlXuRa+IOCm1h0mhfz/uivYK4rtGXXCO/DdkhGjHqvTt3jrSZOLh38rylrBQg5SgYqhYkTQE7J1jlgK3Trqz+4B3KmAmevteCoPl6jfBRpaU9XaMYL7l+ar8pMBCA6yRZGfeGNEFQMJA1pfSycDhnYioBGh3HtKdGhFJEl5SmOqENFcajOefyercz+SARf/5BfUJ2mlTCJowaXJj8jYL3/aZ7xPXcwZdDN517CvbEFXO33SZGLR5kVH5eHcIL5RGpDm07hPndJxEV2KOvUTIyaucGv8eC+djhoujVEosEh3yGmupSO0mYcDrJdDGc2p+xIP/XyA+MpOdfzKONfozbLX+EMsQIaCf4LvmS2MOFghwvjZ8vAZZQif4r5KS7cYxa+MktoCSZvUKnOWwxXYZFsZFl+akiRh0b3D6swkl1mKfGIwQG9eK2IWeUrARYdyVL9zmUJoQqVOl4wpg8vBY0ZhRkJk2uX87kJavPx94Gmh4MNPZd3dflccbftEO6wqYkwmimsXX4/FR0ywl3JI6ZPD5N1vnUYWmHL10doZwfB6EqHyle0tGIPltrH1eLb5tvqnL8iec9Q++8ek4/vz+ycGT0GfppGHZtezY/5FJYwAZoWDMV5ZTkbNPRFoV8hX9dP/g2PL7PhwAahu26ANOC/pTHbv3aulB4OQDeeF1xbCgLGRM++B31bKmTqq9exYzoX2pnx0GLfJ2vEO8vswFVnmIcA2Qj/vFIymeJg/51McCx3Qow1dw6PereeMZsgYPZyWu2f6H8PNjm9aG9kcDBa+XaLhYG/RnRgT1Sh9JshVXhRpVyxwgAJBXQZFJOwHqgilZ27pQNu3+M3sL7v3kq6bDQO9yMUojnZc4PByZLSwtou05HW8AvahgC9Uvz/MQiC+at6wx1q8xpY0EqRfGXM0eHbnEG+Wfv1VpTs5fL96ZmoX3p59lOc20NfDqM4ydOPxoQz5CupNBE5LPiX7zaGs0ST1PXWcK9B9dcsZTosCBaGaRTwE97QnMoDJv5QdP88QCO7SEy33227dUMgthRMTEsvQsJZD82JfJu1HYit7bwWJsP5cVjNu4f0o6aP0twhXhh9rY9LRv8tOfceM25mmvu10YLl573tTkGZ4caUH6RPP9Mg/wyZLpHkFZRJxGoukB3CLn06Oy8yNGY7kXB+rFOTpiZeGbup5wWdlJLkujMs9Lfl07cE20rkRhDEZTA1BjA2yhugUuAo8VGC+WyZZioV7DCUnTiXnhqbC+EQgKPswnW/nvWWo0XsoOu/AQdi48+mdvM7MPmIdQWbKNyvxzLfWVypaVK9FO11Z56f0MDSFR7+9hPLoKNNLuC4jk02IHuwKylFnI+JmMCM843rrbsWSgzZNaI58IINe83Gbijl5dXnqT71qid7f+WfxyJowWtza7LkHXAVZi0Tgj7zECxJlUmR07p7fnC82SlAAHgRXA3td0znqoAZkwtVCDXBqcSJ5upyixzULqIIlUnOqC2PVAU6C7aH/QafEC/iGGr5hwEdWLKBYUg4nIMHasFvSBFgAFpXzds0WTUbx3FkJaotEAAA=","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"💬","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🧭","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"💬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id_hash":"2e44ddf7bb2daff60087f64c664df034eeb00b08fa1faa159546e2b84b7dac3f","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id_hash":"22a2ebdf850048b5d9abec1400df484097f265aa8564a7380a32c1c1ea81af0e","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id_hash":"","is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"👑","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🎧","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"🧭","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
+    window.__HUB_DB__ = {"generated_at":"2026-11-14T17:28:31.450660+00:00","bot_username":"Thehub69_bot","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","icon_url":"https://cdn.discordapp.com/role-icons/1320297847299506236/28f309287ada7f4af50726d80a3b7815.png?size=128","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","icon_url":"https://cdn.discordapp.com/role-icons/1320297743356268544/a163f0361ef75d3f17c84b26c7d91629.png?size=128","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","icon_url":"https://cdn.discordapp.com/role-icons/1320298030624411723/298f1b679a56c93fbb52f9f11b40ace7.png?size=128","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","icon_url":"https://cdn.discordapp.com/role-icons/1564912746984906822/de4c53ef07ff90960a7e6b30f3a8b0fa.png?size=128","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id_hash":"ca2d2326e9275a810f1d61605f5d01278081127794b739fff87ad7fda6e8bef5","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320298030624411723/298f1b679a56c93fbb52f9f11b40ace7.png?size=128","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"📱","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"😴","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"😶","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🎨","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"🕵️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"🤖","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🤫","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"👍","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🌫️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"💦","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🛸","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id_hash":"2e44ddf7bb2daff60087f64c664df034eeb00b08fa1faa159546e2b84b7dac3f","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320297743356268544/a163f0361ef75d3f17c84b26c7d91629.png?size=128","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"📷","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id_hash":"22a2ebdf850048b5d9abec1400df484097f265aa8564a7380a32c1c1ea81af0e","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320297847299506236/28f309287ada7f4af50726d80a3b7815.png?size=128","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🤐","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id_hash":"","is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_icon_url":"https://cdn.discordapp.com/role-icons/1564912746984906822/de4c53ef07ff90960a7e6b30f3a8b0fa.png?size=128","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"💔","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🪐","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"🔮","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🏛️","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🏊","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"📽️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🩺","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎃","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🗿","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"⛩️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
     /* __HUB_DB_END__ */
   </script>
 
@@ -1365,13 +1482,13 @@
     ];
 
     const FONTS = [
-      { id: "default", name: "Dota 2 Event", cls: "font-default" },
-      { id: "cyber", name: "Киберпанк", cls: "font-cyber" },
-      { id: "royal", name: "Павшая корона (SC)", cls: "font-royal" },
-      { id: "pixel", name: "Ретро Пиксель", cls: "font-pixel" },
-      { id: "strike", name: "Ударный", cls: "font-strike" },
-      { id: "script", name: "Рукописный", cls: "font-script" },
-      { id: "gothic", name: "Благородный", cls: "font-gothic" }
+      { id: "default", name: "Dota 2 Event", cls: "font-default", bodyCls: "theme-font-default" },
+      { id: "cyber", name: "Киберпанк", cls: "font-cyber", bodyCls: "theme-font-cyber" },
+      { id: "royal", name: "Павшая корона (SC)", cls: "font-royal", bodyCls: "theme-font-royal" },
+      { id: "pixel", name: "Ретро Пиксель", cls: "font-pixel", bodyCls: "theme-font-pixel" },
+      { id: "strike", name: "Ударный", cls: "font-strike", bodyCls: "theme-font-strike" },
+      { id: "script", name: "Рукописный", cls: "font-script", bodyCls: "theme-font-script" },
+      { id: "gothic", name: "Благородный", cls: "font-gothic", bodyCls: "theme-font-gothic" }
     ];
 
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -1620,13 +1737,18 @@
       document.getElementById("levelXpFill").style.width = `${xpPct}%`;
       document.getElementById("levelXpText").textContent = `${xpCur} / ${xpNext} XP`;
 
-      // Имя и шрифт
+      // Имя и единый шрифт всей активности
       const nameEl = document.getElementById("playerName");
-      FONTS.forEach(f => nameEl.classList.remove(f.cls));
+      FONTS.forEach(f => {
+        nameEl.classList.remove(f.cls);
+        if (f.bodyCls) document.body.classList.remove(f.bodyCls);
+      });
       const fontObj = FONTS.find(f => f.id === draftState.font_id) || FONTS[0];
       nameEl.classList.add(fontObj.cls);
+      if (fontObj.bodyCls) document.body.classList.add(fontObj.bodyCls);
       nameEl.textContent = p.username || "Игрок";
-      document.getElementById("activeFontLabel").textContent = fontObj.name;
+      const activeFontLbl = document.getElementById("activeFontLabel");
+      if (activeFontLbl) activeFontLbl.textContent = fontObj.name;
 
       // Статус синхронизации
       const syncEl = document.getElementById("syncStatusPill");
@@ -1648,8 +1770,27 @@
         syncEl.title = "Аккаунты не синхронизированы — нажми, чтобы узнать о синхронизации";
       }
 
-      // Фракция под именем
-      document.getElementById("factionEmblem").textContent = p.faction_icon || "🛡";
+      // Фракция под именем (подтягивает иконку роли Discord)
+      const facCatalog = (db && db.factions && p.faction_id)
+        ? db.factions[String(p.faction_id).toLowerCase()]
+        : null;
+      const facIconUrl = p.faction_icon_url || (facCatalog && facCatalog.icon_url) || "";
+      const facEmoji = p.faction_icon || (facCatalog && facCatalog.icon) || "🛡";
+      const emblemEl = document.getElementById("factionEmblem");
+      emblemEl.innerHTML = "";
+      if (facIconUrl) {
+        const facImg = document.createElement("img");
+        facImg.className = "faction-emblem-img";
+        facImg.alt = p.faction_name || "Фракция";
+        facImg.referrerPolicy = "no-referrer";
+        facImg.onerror = () => {
+          emblemEl.textContent = facEmoji;
+        };
+        facImg.src = facIconUrl;
+        emblemEl.appendChild(facImg);
+      } else {
+        emblemEl.textContent = facEmoji;
+      }
       document.getElementById("factionName").textContent = p.faction_name || "Без фракции";
       document.getElementById("factionSub").textContent = p.is_linked
         ? "Единый аккаунт активен"
@@ -2125,7 +2266,7 @@
     }
 
     function openFontModal() {
-      openModal("🔤 Шрифт оформления имени", (body) => {
+      openModal("🔤 Шрифт оформления активности", (body) => {
         const list = document.createElement("div");
         list.style.display = "flex";
         list.style.flexDirection = "column";
@@ -2139,20 +2280,36 @@
             persistLocalState();
             renderProfile();
             closeModal();
-            showToast(`Шрифт «${font.name}» применён`);
+            showToast(`Шрифт «${font.name}» применён ко всей активности`);
           };
 
+          const previewWrap = document.createElement("div");
+          previewWrap.style.minWidth = "0";
           const preview = document.createElement("div");
           preview.className = font.cls;
-          preview.style.fontSize = "20px";
+          preview.style.fontSize = font.id === "pixel" ? "13px" : (font.id === "script" ? "24px" : "19px");
           preview.textContent = currentProfile.username || "Игрок";
+
+          const subSample = document.createElement("div");
+          subSample.className = font.cls;
+          subSample.style.fontSize = font.id === "pixel" ? "8.5px" : (font.id === "script" ? "14px" : "11px");
+          subSample.style.fontStyle = "normal";
+          subSample.style.textTransform = "none";
+          subSample.style.letterSpacing = "0.2px";
+          subSample.style.color = "#94a3b8";
+          subSample.style.marginTop = "2px";
+          subSample.textContent = "Витрина достижений • Очки фракции • Профиль";
+
+          previewWrap.appendChild(preview);
+          previewWrap.appendChild(subSample);
 
           const meta = document.createElement("span");
           meta.style.fontSize = "11px";
           meta.style.color = "#94a3b8";
+          meta.style.whiteSpace = "nowrap";
           meta.textContent = font.name;
 
-          opt.appendChild(preview);
+          opt.appendChild(previewWrap);
           opt.appendChild(meta);
           list.appendChild(opt);
         });
@@ -2203,16 +2360,30 @@
           };
 
           const left = document.createElement("div");
+          left.style.display = "flex";
+          left.style.alignItems = "center";
+          left.style.gap = "10px";
+          left.style.minWidth = "0";
+
+          const miniBadge = document.createElement("span");
+          miniBadge.className = "ach-icon-badge";
+          miniBadge.textContent = ach.icon || "🏅";
+
+          const textWrap = document.createElement("div");
+          textWrap.style.minWidth = "0";
           const title = document.createElement("div");
           title.style.fontWeight = "800";
           title.style.fontSize = "13px";
-          title.textContent = `${ach.icon || "🏅"} ${ach.name}`;
+          title.textContent = ach.name;
           const sub = document.createElement("div");
           sub.style.fontSize = "11px";
           sub.style.color = "#94a3b8";
           sub.textContent = ach.description;
-          left.appendChild(title);
-          left.appendChild(sub);
+          textWrap.appendChild(title);
+          textWrap.appendChild(sub);
+
+          left.appendChild(miniBadge);
+          left.appendChild(textWrap);
 
           const right = document.createElement("span");
           right.className = "ach-reward-pill";
@@ -2374,9 +2545,8 @@
 
       document.getElementById("syncStatusPill").onclick = () => openSyncModal(currentProfile);
       document.getElementById("levelBoxBtn").onclick = openPortraitModal;
-      document.getElementById("openPortraitModalBtn").onclick = openPortraitModal;
+      document.getElementById("playerNameBtn").onclick = openFontModal;
       document.getElementById("openFrameModalBtn").onclick = openFrameModal;
-      document.getElementById("openFontModalBtn").onclick = openFontModal;
       document.getElementById("saveProfileBtn").onclick = saveProfileToBot;
       document.getElementById("modalCloseBtn").onclick = closeModal;
       document.getElementById("modalBackdrop").onclick = (ev) => {
