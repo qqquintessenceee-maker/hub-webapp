@@ -193,8 +193,14 @@
       background: #101521;
       z-index: 1;
     }
-    .level-box-trigger:hover { transform: translateY(-2px); }
-    .level-box-trigger:active { transform: scale(0.97); }
+    .level-box-trigger:hover:not(.readonly) { transform: translateY(-2px); }
+    .level-box-trigger:active:not(.readonly) { transform: scale(0.97); }
+    .level-box-trigger.readonly,
+    .level-box-trigger:disabled {
+      cursor: default;
+      opacity: 1;
+      color: var(--text-main);
+    }
 
     .portrait-media {
       position: relative;
@@ -247,9 +253,12 @@
       transition: opacity 0.16s ease;
       pointer-events: none;
     }
-    .level-box-trigger:hover .portrait-hover-hint,
-    .level-box-trigger:focus-visible .portrait-hover-hint {
+    .level-box-trigger:not(.readonly):hover .portrait-hover-hint,
+    .level-box-trigger:not(.readonly):focus-visible .portrait-hover-hint {
       opacity: 1;
+    }
+    .level-box-trigger.readonly .portrait-hover-hint {
+      display: none;
     }
 
     .portrait-lvl-pill {
@@ -374,11 +383,20 @@
       transition: background 0.15s ease, border-color 0.15s ease;
       max-width: 100%;
     }
-    .player-name-btn:hover,
-    .player-name-btn:focus-visible {
+    .player-name-btn:not(.readonly):hover,
+    .player-name-btn:not(.readonly):focus-visible {
       background: rgba(255, 255, 255, 0.06);
       border-color: rgba(255, 255, 255, 0.16);
       outline: none;
+    }
+    .player-name-btn.readonly,
+    .player-name-btn:disabled {
+      cursor: default;
+      opacity: 1;
+      color: var(--text-main);
+    }
+    .player-name-btn.readonly .name-font-badge {
+      display: none;
     }
 
     .player-name {
@@ -740,6 +758,19 @@
       gap: 8px;
     }
 
+    .foreign-readonly-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-color: rgba(148, 163, 184, 0.2);
+      background: rgba(17, 23, 38, 0.72);
+    }
+    .foreign-readonly-text {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
     .action-btn {
       width: 100%;
       padding: 10px 12px;
@@ -836,14 +867,20 @@
       transition: transform 0.14s ease, border-color 0.15s ease, filter 0.15s ease;
       text-align: left;
     }
+    .ach-slot:disabled {
+      opacity: 1;
+      color: var(--text-main);
+    }
+    .ach-slot.readonly {
+      cursor: default;
+    }
     .ach-slot:not(.empty) {
       overflow: hidden;
       isolation: isolate;
-      animation: achBorderShimmer 4.4s ease-in-out infinite;
     }
-    .ach-slot:not(.empty) > * {
+    .ach-slot:not(.empty) > :not(.ach-epoch-rim):not(.ach-epoch-sparks) {
       position: relative;
-      z-index: 2;
+      z-index: 3;
     }
     .ach-slot:not(.empty)::before {
       content: "";
@@ -853,19 +890,10 @@
       left: -65%;
       width: 58%;
       pointer-events: none;
-      z-index: 1;
-      opacity: 0.28;
-      background: linear-gradient(
-        105deg,
-        transparent 10%,
-        color-mix(in srgb, var(--rarity-color) 28%, transparent) 38%,
-        color-mix(in srgb, var(--rarity-color) 82%, #ffffff 18%) 50%,
-        color-mix(in srgb, var(--rarity-color) 28%, transparent) 62%,
-        transparent 90%
-      );
+      z-index: 2;
+      opacity: 0;
       transform: translate3d(-120%, 0, 0) skewX(-20deg);
-      animation: achSheen 5.6s ease-in-out infinite;
-      will-change: transform;
+      will-change: transform, opacity;
     }
     .ach-slot:not(.empty)::after {
       content: "";
@@ -873,52 +901,156 @@
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      background:
-        radial-gradient(120% 90% at 15% 10%, color-mix(in srgb, var(--rarity-color) 28%, transparent), transparent 62%),
-        radial-gradient(95% 80% at 90% 92%, color-mix(in srgb, var(--rarity-color) 18%, transparent), transparent 58%);
-      animation: achInnerGlow 4.4s ease-in-out infinite;
-      will-change: opacity;
+      will-change: opacity, background-position;
     }
+
+    /* Огранка и орбитальный золотисто-оранжевый перелив только для Эпохальных */
+    .ach-epoch-rim {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+    }
+    .ach-epoch-rim-spin {
+      position: absolute;
+      inset: -65%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(234, 88, 12, 0.08) 0deg,
+        rgba(245, 158, 11, 0.85) 38deg,
+        rgba(254, 243, 199, 0.96) 58deg,
+        rgba(251, 191, 36, 0.88) 78deg,
+        rgba(234, 88, 12, 0.14) 118deg,
+        rgba(234, 88, 12, 0.08) 185deg,
+        rgba(249, 115, 22, 0.72) 225deg,
+        rgba(253, 230, 138, 0.86) 245deg,
+        rgba(245, 158, 11, 0.12) 295deg,
+        rgba(234, 88, 12, 0.08) 360deg
+      );
+      animation: achEpochSpin 6.2s linear infinite;
+      will-change: transform;
+    }
+    .ach-epoch-sparks {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background-image:
+        radial-gradient(2.5px 2.5px at 84% 26%, rgba(254, 243, 199, 0.92) 0%, rgba(251, 191, 36, 0.45) 45%, transparent 100%),
+        radial-gradient(2px 2px at 66% 18%, rgba(253, 230, 138, 0.85) 0%, rgba(245, 158, 11, 0.35) 50%, transparent 100%),
+        radial-gradient(2.5px 2.5px at 91% 62%, rgba(251, 191, 36, 0.85) 0%, rgba(234, 88, 12, 0.3) 50%, transparent 100%),
+        radial-gradient(2px 2px at 26% 84%, rgba(254, 243, 199, 0.78) 0%, rgba(245, 158, 11, 0.25) 55%, transparent 100%);
+      animation: achEpochSparks 3.4s ease-in-out infinite;
+    }
+    @keyframes achEpochSparks {
+      0%, 100% { opacity: 0.38; transform: scale(0.99); }
+      50% { opacity: 1; transform: scale(1.015); }
+    }
+
     .ach-slot:not(.empty):nth-child(2)::before,
     .ach-slot:not(.empty):nth-child(2)::after,
+    .ach-slot:not(.empty):nth-child(2) .ach-epoch-rim-spin,
     .ach-slot:not(.empty):nth-child(2) { animation-delay: 0.7s; }
     .ach-slot:not(.empty):nth-child(3)::before,
     .ach-slot:not(.empty):nth-child(3)::after,
+    .ach-slot:not(.empty):nth-child(3) .ach-epoch-rim-spin,
     .ach-slot:not(.empty):nth-child(3) { animation-delay: 1.4s; }
     .ach-slot:not(.empty):nth-child(4)::before,
     .ach-slot:not(.empty):nth-child(4)::after,
+    .ach-slot:not(.empty):nth-child(4) .ach-epoch-rim-spin,
     .ach-slot:not(.empty):nth-child(4) { animation-delay: 2.1s; }
     .ach-slot:not(.empty):nth-child(5)::before,
     .ach-slot:not(.empty):nth-child(5)::after,
+    .ach-slot:not(.empty):nth-child(5) .ach-epoch-rim-spin,
     .ach-slot:not(.empty):nth-child(5) { animation-delay: 2.8s; }
     .ach-slot:not(.empty):nth-child(6)::before,
     .ach-slot:not(.empty):nth-child(6)::after,
+    .ach-slot:not(.empty):nth-child(6) .ach-epoch-rim-spin,
     .ach-slot:not(.empty):nth-child(6) { animation-delay: 3.5s; }
 
     @keyframes achSheen {
-      0%, 16% {
-        transform: translate3d(-120%, 0, 0) skewX(-20deg);
-      }
-      54%, 100% {
-        transform: translate3d(380%, 0, 0) skewX(-20deg);
-      }
+      0%, 18% { transform: translate3d(-120%, 0, 0) skewX(-20deg); }
+      56%, 100% { transform: translate3d(390%, 0, 0) skewX(-20deg); }
     }
-    @keyframes achInnerGlow {
-      0%, 100% { opacity: 0.42; }
-      50% { opacity: 1; }
-    }
-    @keyframes achBorderShimmer {
+    @keyframes achCommonBorder {
       0%, 100% {
-        border-color: color-mix(in srgb, var(--rarity-color) 52%, rgba(255, 255, 255, 0.08));
-        box-shadow: inset 0 0 18px color-mix(in srgb, var(--rarity-color) 12%, transparent), 0 4px 14px rgba(0, 0, 0, 0.35);
+        border-color: rgba(148, 163, 184, 0.34);
+        box-shadow: inset 0 0 10px rgba(148, 163, 184, 0.06), 0 4px 12px rgba(0, 0, 0, 0.34);
       }
       50% {
-        border-color: color-mix(in srgb, var(--rarity-color) 92%, #ffffff 8%);
-        box-shadow: inset 0 0 26px color-mix(in srgb, var(--rarity-color) 24%, transparent), 0 0 18px color-mix(in srgb, var(--rarity-color) 28%, transparent);
+        border-color: rgba(203, 213, 225, 0.56);
+        box-shadow: inset 0 0 14px rgba(148, 163, 184, 0.12), 0 4px 14px rgba(0, 0, 0, 0.38);
       }
     }
+    @keyframes achRareGlow {
+      0%, 100% { opacity: 0.48; }
+      50% { opacity: 0.95; }
+    }
+    @keyframes achRareBorder {
+      0%, 100% {
+        border-color: rgba(59, 130, 246, 0.45);
+        box-shadow: inset 0 0 16px rgba(59, 130, 246, 0.14), 0 4px 14px rgba(0, 0, 0, 0.38);
+      }
+      50% {
+        border-color: rgba(96, 165, 250, 0.9);
+        box-shadow: inset 0 0 24px rgba(59, 130, 246, 0.25), 0 0 14px rgba(59, 130, 246, 0.22);
+      }
+    }
+    @keyframes achUltraAurora {
+      0% { background-position: 0% 25%; opacity: 0.55; }
+      50% { background-position: 100% 75%; opacity: 0.95; }
+      100% { background-position: 0% 25%; opacity: 0.55; }
+    }
+    @keyframes achUltraBorder {
+      0%, 100% {
+        border-color: rgba(168, 85, 247, 0.52);
+        box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.16), 0 4px 16px rgba(0, 0, 0, 0.4);
+      }
+      50% {
+        border-color: rgba(192, 132, 252, 0.95);
+        box-shadow: inset 0 0 30px rgba(168, 85, 247, 0.3), 0 0 18px rgba(168, 85, 247, 0.3);
+      }
+    }
+    @keyframes achUltraBadge {
+      0%, 100% { box-shadow: 0 2px 10px rgba(168, 85, 247, 0.3); }
+      50% { box-shadow: 0 0 16px rgba(192, 132, 252, 0.58); }
+    }
+    @keyframes achEpochFlow {
+      0% { background-position: 0% 15%; opacity: 0.68; }
+      50% { background-position: 100% 85%; opacity: 1; }
+      100% { background-position: 0% 15%; opacity: 0.68; }
+    }
+    @keyframes achEpochSheen {
+      0%, 14% { transform: translate3d(-125%, 0, 0) skewX(-22deg); }
+      56%, 100% { transform: translate3d(400%, 0, 0) skewX(-22deg); }
+    }
+    @keyframes achEpochBorder {
+      0%, 100% {
+        border-color: rgba(245, 158, 11, 0.62);
+        box-shadow: inset 0 0 24px rgba(245, 158, 11, 0.2), 0 0 16px rgba(234, 88, 12, 0.2), 0 6px 18px rgba(0, 0, 0, 0.45);
+      }
+      50% {
+        border-color: rgba(251, 191, 36, 0.98);
+        box-shadow: inset 0 0 36px rgba(245, 158, 11, 0.34), 0 0 24px rgba(245, 158, 11, 0.38), 0 8px 22px rgba(0, 0, 0, 0.5);
+      }
+    }
+    @keyframes achEpochBadge {
+      0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.38), inset 0 0 8px rgba(253, 230, 138, 0.16); }
+      50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.72), inset 0 0 12px rgba(254, 243, 199, 0.28); }
+    }
+    @keyframes achEpochSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
 
-    .ach-slot:hover {
+    .ach-slot:not(.readonly):hover {
       transform: translateY(-2px);
       filter: brightness(1.08);
     }
@@ -933,25 +1065,128 @@
       color: var(--text-muted);
     }
 
+    /* 1. Серебряные (Обычные): максимально спокойный и простой перелив */
     .ach-slot.rarity-common {
       --rarity-color: #94a3b8;
       border-left: 4px solid #94a3b8;
-      background: linear-gradient(155deg, #1a2130 0%, #101521 72%);
+      background: linear-gradient(155deg, #1b2232 0%, #101521 75%);
+      animation: achCommonBorder 8.2s ease-in-out infinite;
     }
+    .ach-slot.rarity-common::before {
+      opacity: 0.15;
+      width: 44%;
+      background: linear-gradient(
+        105deg,
+        transparent 15%,
+        rgba(148, 163, 184, 0.16) 40%,
+        rgba(226, 232, 240, 0.42) 50%,
+        rgba(148, 163, 184, 0.16) 60%,
+        transparent 85%
+      );
+      animation: achSheen 8.2s ease-in-out infinite;
+    }
+    .ach-slot.rarity-common::after {
+      background: radial-gradient(100% 75% at 15% 10%, rgba(148, 163, 184, 0.11), transparent 62%);
+    }
+
+    /* 2. Синие (Редкие): чистый сапфировый отблеск + пульсация углов */
     .ach-slot.rarity-rare {
       --rarity-color: #3b82f6;
       border-left: 4px solid #3b82f6;
-      background: linear-gradient(155deg, #13213c 0%, #0d1424 72%);
+      background: linear-gradient(155deg, #132342 0%, #0b1426 74%);
+      animation: achRareBorder 5.2s ease-in-out infinite;
     }
+    .ach-slot.rarity-rare::before {
+      opacity: 0.26;
+      background: linear-gradient(
+        106deg,
+        transparent 10%,
+        rgba(37, 99, 235, 0.24) 36%,
+        rgba(147, 197, 253, 0.72) 50%,
+        rgba(59, 130, 246, 0.26) 64%,
+        transparent 90%
+      );
+      animation: achSheen 5.2s ease-in-out infinite;
+    }
+    .ach-slot.rarity-rare::after {
+      background:
+        radial-gradient(115% 85% at 14% 10%, rgba(59, 130, 246, 0.24), transparent 62%),
+        radial-gradient(95% 75% at 90% 92%, rgba(96, 165, 250, 0.16), transparent 58%);
+      animation: achRareGlow 5.2s ease-in-out infinite;
+    }
+
+    /* 3. Фиолетовые (Ультра-редкие): живая аметистовая волна + двойная лента блеска */
     .ach-slot.rarity-ultrarare {
       --rarity-color: #a855f7;
       border-left: 4px solid #a855f7;
-      background: linear-gradient(155deg, #211538 0%, #110d20 72%);
+      background: linear-gradient(155deg, #271546 0%, #110b22 76%);
+      animation: achUltraBorder 4.2s ease-in-out infinite;
     }
+    .ach-slot.rarity-ultrarare::before {
+      opacity: 0.36;
+      width: 66%;
+      background: linear-gradient(
+        108deg,
+        transparent 6%,
+        rgba(147, 51, 234, 0.28) 28%,
+        rgba(233, 213, 255, 0.76) 43%,
+        rgba(168, 85, 247, 0.22) 53%,
+        rgba(192, 132, 252, 0.56) 64%,
+        rgba(126, 34, 206, 0.2) 76%,
+        transparent 94%
+      );
+      animation: achSheen 4.4s ease-in-out infinite;
+    }
+    .ach-slot.rarity-ultrarare::after {
+      background-image:
+        radial-gradient(95% 80% at 16% 14%, rgba(192, 132, 252, 0.34), transparent 60%),
+        radial-gradient(95% 85% at 88% 86%, rgba(147, 51, 234, 0.3), transparent 58%),
+        linear-gradient(132deg, rgba(126, 34, 206, 0.16) 0%, rgba(168, 85, 247, 0.24) 48%, rgba(88, 28, 135, 0.12) 100%);
+      background-size: 220% 220%;
+      animation: achUltraAurora 6.4s ease-in-out infinite;
+    }
+    .ach-slot.rarity-ultrarare .ach-icon-badge {
+      animation: achUltraBadge 4.2s ease-in-out infinite;
+    }
+
+    /* 4. Оранжевые (Эпохальные): самый сложный многослойный огненно-золотой перелив */
     .ach-slot.rarity-epochal {
       --rarity-color: #f59e0b;
       border-left: 4px solid #f59e0b;
-      background: linear-gradient(155deg, #281c0d 0%, #14100b 72%);
+      background: linear-gradient(155deg, #2f1d07 0%, #191006 54%, #110b05 100%);
+      animation: achEpochBorder 3.8s ease-in-out infinite;
+    }
+    .ach-slot.rarity-epochal::before {
+      opacity: 0.48;
+      width: 72%;
+      background: linear-gradient(
+        112deg,
+        transparent 4%,
+        rgba(234, 88, 12, 0.34) 24%,
+        rgba(251, 191, 36, 0.72) 38%,
+        rgba(254, 243, 199, 0.92) 47%,
+        rgba(245, 158, 11, 0.36) 57%,
+        rgba(253, 230, 138, 0.68) 68%,
+        rgba(234, 88, 12, 0.26) 80%,
+        transparent 96%
+      );
+      animation: achEpochSheen 3.6s ease-in-out infinite;
+    }
+    .ach-slot.rarity-epochal::after {
+      background-image:
+        radial-gradient(100% 85% at 18% 12%, rgba(251, 191, 36, 0.42), transparent 60%),
+        radial-gradient(95% 90% at 86% 88%, rgba(234, 88, 12, 0.38), transparent 58%),
+        linear-gradient(135deg, rgba(194, 65, 12, 0.2) 0%, rgba(245, 158, 11, 0.34) 44%, rgba(253, 230, 138, 0.22) 62%, rgba(154, 52, 18, 0.18) 100%);
+      background-size: 260% 260%;
+      animation: achEpochFlow 5.4s ease-in-out infinite;
+    }
+    .ach-slot.rarity-epochal .ach-icon-badge,
+    .ach-slot.rarity-epochal .ach-rarity-badge {
+      animation: achEpochBadge 3.2s ease-in-out infinite;
+    }
+    .ach-slot.rarity-epochal .ach-name {
+      color: #fffbeb;
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.38);
     }
 
     .ach-slot-top {
@@ -971,6 +1206,7 @@
       background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--rarity-color) 32%, #1e293b), #0b101b);
       border: 1px solid color-mix(in srgb, var(--rarity-color) 70%, transparent);
       box-shadow: 0 2px 10px color-mix(in srgb, var(--rarity-color) 28%, transparent);
+      color: #ffffff;
       font-size: 19px;
       flex-shrink: 0;
     }
@@ -1424,8 +1660,8 @@
           </div>
         </div>
 
-        <!-- Настройки кастомного оформления -->
-        <div class="panel-card style-controls">
+        <!-- Настройки кастомного оформления (только для владельца профиля) -->
+        <div id="styleControlsCard" class="panel-card style-controls">
           <div class="card-kicker"><span>Оформление профиля</span></div>
 
           <button type="button" id="openFrameModalBtn" class="action-btn">
@@ -1436,6 +1672,13 @@
           <button type="button" id="saveProfileBtn" class="save-btn">
             <span>💾 Сохранить оформление</span>
           </button>
+        </div>
+
+        <div id="foreignReadonlyCard" class="panel-card foreign-readonly-card" style="display:none;">
+          <div class="card-kicker"><span>🔒 Чужой профиль</span></div>
+          <div class="foreign-readonly-text">
+            Режим просмотра. Менять портрет, аватарку, рамку, шрифт и витрину может только владелец этого профиля.
+          </div>
         </div>
       </div>
 
@@ -1466,7 +1709,7 @@
 
   <script>
     /* __HUB_DB_START__ */
-    window.__HUB_DB__ = {"generated_at":"2026-11-14T17:28:31.450660+00:00","bot_username":"Thehub69_bot","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","icon_url":"https://cdn.discordapp.com/role-icons/1320297847299506236/28f309287ada7f4af50726d80a3b7815.png?size=128","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","icon_url":"https://cdn.discordapp.com/role-icons/1320297743356268544/a163f0361ef75d3f17c84b26c7d91629.png?size=128","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","icon_url":"https://cdn.discordapp.com/role-icons/1320298030624411723/298f1b679a56c93fbb52f9f11b40ace7.png?size=128","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","icon_url":"https://cdn.discordapp.com/role-icons/1564912746984906822/de4c53ef07ff90960a7e6b30f3a8b0fa.png?size=128","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id_hash":"ca2d2326e9275a810f1d61605f5d01278081127794b739fff87ad7fda6e8bef5","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320298030624411723/298f1b679a56c93fbb52f9f11b40ace7.png?size=128","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"📱","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"😴","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"😶","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🎨","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"🕵️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"🤖","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🤫","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"👍","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🌫️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"💦","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🛸","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id_hash":"2e44ddf7bb2daff60087f64c664df034eeb00b08fa1faa159546e2b84b7dac3f","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320297743356268544/a163f0361ef75d3f17c84b26c7d91629.png?size=128","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"📷","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id_hash":"22a2ebdf850048b5d9abec1400df484097f265aa8564a7380a32c1c1ea81af0e","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320297847299506236/28f309287ada7f4af50726d80a3b7815.png?size=128","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🤐","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id_hash":"","is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_icon_url":"https://cdn.discordapp.com/role-icons/1564912746984906822/de4c53ef07ff90960a7e6b30f3a8b0fa.png?size=128","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"💔","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🪐","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"🔮","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🏛️","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🏊","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"📽️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🩺","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎃","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🗿","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"⛩️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
+    window.__HUB_DB__ = {"generated_at":"2026-11-14T17:42:26.170734+00:00","bot_username":"Thehub69_bot","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","icon_url":"https://cdn.discordapp.com/role-icons/1320297847299506236/28f309287ada7f4af50726d80a3b7815.png?size=128","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","icon_url":"https://cdn.discordapp.com/role-icons/1320297743356268544/a163f0361ef75d3f17c84b26c7d91629.png?size=128","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","icon_url":"https://cdn.discordapp.com/role-icons/1320298030624411723/298f1b679a56c93fbb52f9f11b40ace7.png?size=128","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":840,"current_tier":2,"icon":"🌿","icon_url":"https://cdn.discordapp.com/role-icons/1564912746984906822/de4c53ef07ff90960a7e6b30f3a8b0fa.png?size=128","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id_hash":"ca2d2326e9275a810f1d61605f5d01278081127794b739fff87ad7fda6e8bef5","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320298030624411723/298f1b679a56c93fbb52f9f11b40ace7.png?size=128","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"📱","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"😴","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"😶","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🎨","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"🕵️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"🤖","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🤫","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"👍","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🌫️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"💦","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🛸","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id_hash":"2e44ddf7bb2daff60087f64c664df034eeb00b08fa1faa159546e2b84b7dac3f","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320297743356268544/a163f0361ef75d3f17c84b26c7d91629.png?size=128","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"📷","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id_hash":"22a2ebdf850048b5d9abec1400df484097f265aa8564a7380a32c1c1ea81af0e","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_icon_url":"https://cdn.discordapp.com/role-icons/1320297847299506236/28f309287ada7f4af50726d80a3b7815.png?size=128","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","telegram_avatar_url":"data:image/webp;base64,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","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🤐","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id_hash":"","is_linked":false,"username":"♦️ AHAahahahah ♦️","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_icon_url":"https://cdn.discordapp.com/role-icons/1564912746984906822/de4c53ef07ff90960a7e6b30f3a8b0fa.png?size=128","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":840,"faction_total_points":840,"unlocked_count":15,"level":25,"total_xp":1215,"xp_current":15,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","telegram_avatar_url":"","custom_avatar_url":"","avatar_mode":"discord","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"💔","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🪐","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"🔮","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🏛️","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🏊","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_silence_breaker","name":"Разрушитель тишины","description":"Написать в чат, в котором никто не писал более 24 часов.","category":"message","icon":"🧨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-14T17:29:43+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"📽️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🩺","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎃","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🗿","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"⛩️","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
     /* __HUB_DB_END__ */
   </script>
 
@@ -1612,24 +1855,31 @@
       let pinned = Array.isArray(profile.pinned_achievements) ? [...profile.pinned_achievements] : [];
       let customAvatarUrl = typeof profile.custom_avatar_url === "string" ? profile.custom_avatar_url : "";
       let avatarMode = normalizeAvatarMode(profile.avatar_mode, customAvatarUrl);
+      const isForeign = isViewingForeignProfile(profile);
 
-      try {
-        const savedRaw = localStorage.getItem(getLocalKey(profile.user_id));
-        if (savedRaw) {
-          const saved = JSON.parse(savedRaw);
-          if (saved.frame_id) frameId = saved.frame_id;
-          if (saved.font_id) fontId = saved.font_id;
-          if (typeof saved.custom_avatar_url === "string") customAvatarUrl = saved.custom_avatar_url;
-          if (saved.avatar_mode) {
-            avatarMode = normalizeAvatarMode(saved.avatar_mode, customAvatarUrl);
-          } else {
-            avatarMode = normalizeAvatarMode("", customAvatarUrl);
+      if (!isForeign) {
+        try {
+          const savedRaw = localStorage.getItem(getLocalKey(profile.user_id));
+          if (savedRaw) {
+            const saved = JSON.parse(savedRaw);
+            if (saved.frame_id) frameId = saved.frame_id;
+            if (saved.font_id) fontId = saved.font_id;
+            if (typeof saved.custom_avatar_url === "string") customAvatarUrl = saved.custom_avatar_url;
+            if (saved.avatar_mode) {
+              avatarMode = normalizeAvatarMode(saved.avatar_mode, customAvatarUrl);
+            } else {
+              avatarMode = normalizeAvatarMode("", customAvatarUrl);
+            }
+            if (Array.isArray(saved.pinned)) {
+              pinned = saved.pinned.filter(id => unlockedSet.has(id)).slice(0, 6);
+            }
           }
-          if (Array.isArray(saved.pinned)) {
-            pinned = saved.pinned.filter(id => unlockedSet.has(id)).slice(0, 6);
-          }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      } else {
+        try {
+          localStorage.removeItem(getLocalKey(profile.user_id));
+        } catch (e) {}
+      }
 
       if (!FRAMES.some(f => f.id === frameId)) frameId = "default";
       if (!FONTS.some(f => f.id === fontId)) fontId = "default";
@@ -1646,7 +1896,7 @@
     }
 
     function persistLocalState() {
-      if (!currentProfile) return;
+      if (!currentProfile || isViewingForeignProfile(currentProfile)) return;
       try {
         localStorage.setItem(getLocalKey(currentProfile.user_id), JSON.stringify(draftState));
       } catch (e) {}
@@ -1716,16 +1966,24 @@
     function renderProfile() {
       if (!currentProfile) return;
       const p = currentProfile;
+      const isForeign = isViewingForeignProfile(p);
+      document.body.classList.toggle("foreign-profile-mode", isForeign);
 
       // Фракционный акцент
       const facColor = p.faction_color || "#5865f2";
       document.documentElement.style.setProperty("--faction-color", facColor);
 
-      // Портрет, уровень и рамка (верхний левый квадрат)
+      // Портрет, уровень и рамка (верхний левый квадрат — редактирование только для владельца)
       const levelBox = document.getElementById("levelBoxBtn");
       FRAMES.forEach(f => levelBox.classList.remove(f.cls));
       const frameObj = FRAMES.find(f => f.id === draftState.frame_id) || FRAMES[0];
       levelBox.classList.add(frameObj.cls);
+      levelBox.classList.toggle("readonly", isForeign);
+      levelBox.disabled = isForeign;
+      levelBox.setAttribute("aria-disabled", isForeign ? "true" : "false");
+      levelBox.title = isForeign
+        ? "Портрет владельца профиля"
+        : "Нажми на портрет, чтобы выбрать фото (Discord, Telegram или своё)";
       document.getElementById("activeFrameLabel").textContent = frameObj.name;
 
       renderPortrait(p);
@@ -1737,7 +1995,16 @@
       document.getElementById("levelXpFill").style.width = `${xpPct}%`;
       document.getElementById("levelXpText").textContent = `${xpCur} / ${xpNext} XP`;
 
-      // Имя и единый шрифт всей активности
+      // Имя и единый шрифт всей активности (смена только для владельца)
+      const nameBtn = document.getElementById("playerNameBtn");
+      if (nameBtn) {
+        nameBtn.classList.toggle("readonly", isForeign);
+        nameBtn.disabled = isForeign;
+        nameBtn.setAttribute("aria-disabled", isForeign ? "true" : "false");
+        nameBtn.title = isForeign
+          ? "Смена шрифта доступна только владельцу профиля"
+          : "Нажми на имя, чтобы сменить шрифт оформления активности";
+      }
       const nameEl = document.getElementById("playerName");
       FONTS.forEach(f => {
         nameEl.classList.remove(f.cls);
@@ -1750,9 +2017,14 @@
       const activeFontLbl = document.getElementById("activeFontLabel");
       if (activeFontLbl) activeFontLbl.textContent = fontObj.name;
 
+      // Панель кастомизации слева: доступна только владельцу
+      const styleCard = document.getElementById("styleControlsCard");
+      const foreignCard = document.getElementById("foreignReadonlyCard");
+      if (styleCard) styleCard.style.display = isForeign ? "none" : "flex";
+      if (foreignCard) foreignCard.style.display = isForeign ? "flex" : "none";
+
       // Статус синхронизации
       const syncEl = document.getElementById("syncStatusPill");
-      const isForeign = isViewingForeignProfile(p);
       if (p.is_linked) {
         syncEl.textContent = "✓ Discord = Telegram";
         syncEl.classList.remove("unlinked", "foreign");
@@ -1817,6 +2089,7 @@
     function renderShowcase() {
       const grid = document.getElementById("showcaseGrid");
       grid.innerHTML = "";
+      const isForeign = isViewingForeignProfile(currentProfile);
       const unlockedMap = new Map((currentProfile.unlocked_achievements || []).map(a => [a.id, a]));
       const activeCount = draftState.pinned.filter(id => unlockedMap.has(id)).length;
       document.getElementById("showcaseCounter").textContent = `${activeCount} / 6 слотов`;
@@ -1828,8 +2101,29 @@
         btn.type = "button";
 
         if (ach) {
-          btn.className = `ach-slot rarity-${ach.rarity || "common"}`;
-          btn.onclick = () => openSlotPickerModal(slotIdx);
+          const rarity = ach.rarity || "common";
+          btn.className = `ach-slot rarity-${rarity}${isForeign ? " readonly" : ""}`;
+          if (isForeign) {
+            btn.disabled = true;
+            btn.setAttribute("aria-disabled", "true");
+          } else {
+            btn.onclick = () => openSlotPickerModal(slotIdx);
+          }
+
+          if (rarity === "epochal") {
+            const rim = document.createElement("span");
+            rim.className = "ach-epoch-rim";
+            rim.setAttribute("aria-hidden", "true");
+            const rimSpin = document.createElement("span");
+            rimSpin.className = "ach-epoch-rim-spin";
+            rim.appendChild(rimSpin);
+            btn.appendChild(rim);
+
+            const sparks = document.createElement("span");
+            sparks.className = "ach-epoch-sparks";
+            sparks.setAttribute("aria-hidden", "true");
+            btn.appendChild(sparks);
+          }
 
           const top = document.createElement("div");
           top.className = "ach-slot-top";
@@ -1872,16 +2166,23 @@
           btn.appendChild(desc);
           btn.appendChild(rarityLine);
         } else {
-          btn.className = "ach-slot empty";
-          btn.onclick = () => openSlotPickerModal(slotIdx);
+          btn.className = `ach-slot empty${isForeign ? " readonly" : ""}`;
 
           const plus = document.createElement("div");
           plus.className = "empty-plus";
-          plus.textContent = "+";
-
           const lbl = document.createElement("div");
           lbl.className = "empty-label";
-          lbl.textContent = `Закрепить достижение (слот ${slotIdx + 1})`;
+
+          if (isForeign) {
+            btn.disabled = true;
+            btn.setAttribute("aria-disabled", "true");
+            plus.textContent = "—";
+            lbl.textContent = `Слот ${slotIdx + 1} пуст`;
+          } else {
+            btn.onclick = () => openSlotPickerModal(slotIdx);
+            plus.textContent = "+";
+            lbl.textContent = `Закрепить достижение (слот ${slotIdx + 1})`;
+          }
 
           btn.appendChild(plus);
           btn.appendChild(lbl);
@@ -1933,7 +2234,16 @@
       });
     }
 
+    function ensureOwnerAccess(featureName) {
+      if (!currentProfile || isViewingForeignProfile(currentProfile)) {
+        showToast(`🔒 ${featureName} доступно только владельцу профиля`);
+        return false;
+      }
+      return true;
+    }
+
     function openPortraitModal() {
+      if (!ensureOwnerAccess("Изменение портрета и аватарки")) return;
       openModal("🎭 Портрет профиля", (body) => {
         const mode = normalizeAvatarMode(draftState.avatar_mode, draftState.custom_avatar_url);
         const hasTgPhoto = Boolean(currentProfile && currentProfile.telegram_avatar_url);
@@ -2233,6 +2543,7 @@
     }
 
     function openFrameModal() {
+      if (!ensureOwnerAccess("Изменение рамки профиля")) return;
       openModal("🖼 Выбор кастомной рамки", (body) => {
         const grid = document.createElement("div");
         grid.className = "picker-grid";
@@ -2266,6 +2577,7 @@
     }
 
     function openFontModal() {
+      if (!ensureOwnerAccess("Изменение шрифта активности")) return;
       openModal("🔤 Шрифт оформления активности", (body) => {
         const list = document.createElement("div");
         list.style.display = "flex";
@@ -2318,6 +2630,7 @@
     }
 
     function openSlotPickerModal(slotIdx) {
+      if (!ensureOwnerAccess("Редактирование витрины достижений")) return;
       const unlocked = currentProfile.unlocked_achievements || [];
       openModal(`🏆 Витрина: слот #${slotIdx + 1}`, (body) => {
         if (draftState.pinned[slotIdx]) {
@@ -2448,6 +2761,7 @@
               bootProfileId = dUid;
               const found = profiles.find(p => String(p.user_id) === dUid);
               if (found && (!currentProfile || currentProfile.user_id !== found.user_id)) {
+                closeModal();
                 currentProfile = found;
                 const sw = document.getElementById("profileSwitcher");
                 if (sw) sw.value = found.user_id;
@@ -2523,8 +2837,12 @@
           const targetHash = hashTelegramId(paramTgId);
           viewerTelegramHash = targetHash;
           matched = profiles.find(p => p.telegram_id_hash && String(p.telegram_id_hash) === targetHash) || null;
+          if (!matched) {
+            document.getElementById("unlinkedBanner").classList.add("visible");
+          }
         } else if (paramDiscordId) {
-          matched = profiles.find(p => String(p.user_id) === String(paramDiscordId)) || null;
+          viewerDiscordId = String(paramDiscordId);
+          matched = profiles.find(p => String(p.user_id) === viewerDiscordId) || null;
         }
 
         currentProfile = matched || profiles[0];
@@ -2536,6 +2854,7 @@
       switcher.onchange = () => {
         const picked = profiles.find(p => p.user_id === switcher.value);
         if (picked) {
+          closeModal();
           currentProfile = picked;
           viewerSwitchedForeign = Boolean(bootProfileId && String(picked.user_id) !== bootProfileId);
           loadProfileState(currentProfile);
