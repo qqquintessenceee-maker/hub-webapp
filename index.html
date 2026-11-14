@@ -656,7 +656,7 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      flex: 1;
+      align-items: stretch;
       min-width: 0;
     }
 
@@ -667,26 +667,26 @@
     }
 
     .ach-slot {
+      --rarity-color: #94a3b8;
       position: relative;
       border-radius: var(--radius-md);
-      padding: 12px;
-      background: rgba(15, 20, 30, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.10);
+      padding: 13px;
+      background: rgba(15, 20, 30, 0.86);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 8px;
-      min-height: 104px;
+      min-height: 118px;
+      height: auto;
       min-width: 0;
-      overflow: hidden;
       cursor: pointer;
-      transition: transform 0.14s ease, border-color 0.15s ease, background 0.15s ease;
+      transition: transform 0.14s ease, border-color 0.15s ease, filter 0.15s ease;
       text-align: left;
     }
     .ach-slot:hover {
       transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.25);
+      filter: brightness(1.09);
     }
 
     .ach-slot.empty {
@@ -699,14 +699,38 @@
       color: var(--text-muted);
     }
 
-    .ach-slot.rarity-common { border-left: 3px solid #94a3b8; }
-    .ach-slot.rarity-rare { border-left: 3px solid #3b82f6; box-shadow: inset 0 0 16px rgba(59, 130, 246, 0.08); }
-    .ach-slot.rarity-ultrarare { border-left: 3px solid #a855f7; box-shadow: inset 0 0 18px rgba(168, 85, 247, 0.12); }
-    .ach-slot.rarity-epochal { border-left: 3px solid #f59e0b; box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.14); }
+    .ach-slot.rarity-common {
+      --rarity-color: #94a3b8;
+      border: 1.5px solid rgba(148, 163, 184, 0.45);
+      border-left: 4px solid #94a3b8;
+      background: linear-gradient(155deg, rgba(148, 163, 184, 0.14) 0%, rgba(13, 18, 28, 0.94) 68%);
+      box-shadow: inset 0 0 16px rgba(148, 163, 184, 0.08), 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+    .ach-slot.rarity-rare {
+      --rarity-color: #3b82f6;
+      border: 1.5px solid rgba(59, 130, 246, 0.62);
+      border-left: 4px solid #3b82f6;
+      background: linear-gradient(155deg, rgba(59, 130, 246, 0.24) 0%, rgba(11, 19, 36, 0.94) 72%);
+      box-shadow: inset 0 0 24px rgba(59, 130, 246, 0.18), 0 4px 16px rgba(59, 130, 246, 0.16);
+    }
+    .ach-slot.rarity-ultrarare {
+      --rarity-color: #a855f7;
+      border: 1.5px solid rgba(168, 85, 247, 0.72);
+      border-left: 4px solid #a855f7;
+      background: linear-gradient(155deg, rgba(168, 85, 247, 0.28) 0%, rgba(20, 13, 36, 0.94) 72%);
+      box-shadow: inset 0 0 26px rgba(168, 85, 247, 0.22), 0 4px 18px rgba(168, 85, 247, 0.20);
+    }
+    .ach-slot.rarity-epochal {
+      --rarity-color: #f59e0b;
+      border: 1.5px solid rgba(245, 158, 11, 0.82);
+      border-left: 4px solid #f59e0b;
+      background: linear-gradient(155deg, rgba(245, 158, 11, 0.30) 0%, rgba(26, 17, 10, 0.94) 72%);
+      box-shadow: inset 0 0 28px rgba(245, 158, 11, 0.25), 0 4px 20px rgba(245, 158, 11, 0.24);
+    }
 
     .ach-slot-top {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
@@ -718,44 +742,71 @@
       width: 34px;
       height: 34px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.10);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: color-mix(in srgb, var(--rarity-color) 20%, rgba(255, 255, 255, 0.06));
+      border: 1px solid color-mix(in srgb, var(--rarity-color) 55%, rgba(255, 255, 255, 0.12));
       font-size: 18px;
-      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.45));
+      filter: drop-shadow(0 0 3px color-mix(in srgb, var(--rarity-color) 55%, transparent));
       flex-shrink: 0;
     }
 
     .ach-reward-pill {
       font-size: 10px;
       font-weight: 800;
-      padding: 2px 7px;
+      padding: 3px 8px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
+      background: color-mix(in srgb, var(--rarity-color) 22%, rgba(0, 0, 0, 0.35));
+      border: 1px solid color-mix(in srgb, var(--rarity-color) 55%, transparent);
+      color: #ffffff;
       white-space: nowrap;
     }
 
     .ach-name {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 800;
       color: #ffffff;
       line-height: 1.25;
     }
 
     .ach-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: 11.5px;
+      color: #dbe3ee;
+      line-height: 1.42;
+      white-space: normal;
+      word-break: break-word;
+      flex: 1;
     }
 
     .ach-rarity-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 2px;
+      padding-top: 6px;
+      border-top: 1px solid color-mix(in srgb, var(--rarity-color) 25%, rgba(255, 255, 255, 0.06));
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .ach-rarity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--rarity-color) 22%, rgba(0, 0, 0, 0.3));
+      border: 1px solid color-mix(in srgb, var(--rarity-color) 60%, transparent);
+      color: color-mix(in srgb, var(--rarity-color) 35%, #ffffff);
+      letter-spacing: 0.25px;
+      text-transform: uppercase;
+      font-size: 9.5px;
+      font-weight: 800;
+    }
+
+    .ach-slot-tag {
       font-size: 10px;
       font-weight: 700;
-      opacity: 0.9;
+      color: var(--text-muted);
     }
 
     .empty-plus {
@@ -918,6 +969,7 @@
     }
 
     .ach-list-item {
+      --rarity-color: #94a3b8;
       padding: 11px 12px;
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.04);
@@ -931,10 +983,14 @@
       text-align: left;
       width: 100%;
     }
-    .ach-list-item:hover { background: rgba(255, 255, 255, 0.09); }
+    .ach-list-item.rarity-common { --rarity-color: #94a3b8; border-left: 4px solid #94a3b8; background: linear-gradient(90deg, rgba(148, 163, 184, 0.10), rgba(255, 255, 255, 0.03)); }
+    .ach-list-item.rarity-rare { --rarity-color: #3b82f6; border-left: 4px solid #3b82f6; background: linear-gradient(90deg, rgba(59, 130, 246, 0.16), rgba(255, 255, 255, 0.03)); }
+    .ach-list-item.rarity-ultrarare { --rarity-color: #a855f7; border-left: 4px solid #a855f7; background: linear-gradient(90deg, rgba(168, 85, 247, 0.20), rgba(255, 255, 255, 0.03)); }
+    .ach-list-item.rarity-epochal { --rarity-color: #f59e0b; border-left: 4px solid #f59e0b; background: linear-gradient(90deg, rgba(245, 158, 11, 0.22), rgba(255, 255, 255, 0.03)); }
+    .ach-list-item:hover { filter: brightness(1.12); }
     .ach-list-item.in-use {
-      border-color: rgba(88, 101, 242, 0.6);
-      background: rgba(88, 101, 242, 0.14);
+      border-color: color-mix(in srgb, var(--rarity-color) 70%, #5865f2);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--rarity-color) 40%, transparent);
     }
 
     .toast {
@@ -1105,7 +1161,7 @@
 
   <script>
     /* __HUB_DB_START__ */
-    window.__HUB_DB__ = {"generated_at":"2026-11-14T16:30:16.412819+00:00","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id":"6362767585","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"💬","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🧭","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"💬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id":"898536995","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id":"1262442288","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id":null,"is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"👑","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🎧","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"🧭","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
+    window.__HUB_DB__ = {"generated_at":"2026-11-14T16:39:53.850941+00:00","factions":{"ktolhun":{"faction_id":"ktolhun","display_name":"Ktolhun","total_points":10,"current_tier":0,"icon":"🐙","color":"#575EF3"},"drakaris":{"faction_id":"drakaris","display_name":"Drakaris","total_points":10,"current_tier":0,"icon":"🐉","color":"#AC2239"},"phoxis":{"faction_id":"phoxis","display_name":"Phoxis","total_points":350,"current_tier":1,"icon":"🦊","color":"#FFC47C"},"terria":{"faction_id":"terria","display_name":"Terria","total_points":830,"current_tier":2,"icon":"🌿","color":"#02B4B4"}},"profiles":[{"user_id":"290588183006150657","telegram_id":"6362767585","is_linked":true,"username":"Рая Конг","faction_id":"phoxis","faction_name":"Phoxis","faction_icon":"🦊","faction_color":"#FFC47C","faction_tier":1,"faction_points_contributed":350,"faction_total_points":350,"unlocked_count":11,"level":13,"total_xp":625,"xp_current":25,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/290588183006150657/b19ffa9b99db9aed59e91c6376f1e989.png?size=256","pinned_achievements":["u4_trinity_platforms","u2_asleep_at_table","u2_self_censorship_typing","u2_symbol_creator","u1_secret_schemer","u1_bot_love"],"unlocked_achievements":[{"id":"u4_trinity_platforms","name":"Триада устройств","description":"Сидеть в голосовой комнате, где находятся 3 участника с трех разных версий Discord: ПК, браузера и мобильного приложения (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-14T16:10:35+00:00"},{"id":"u2_asleep_at_table","name":"Сон за столом","description":"Остаться единственным участником в канале после 03:00 МСК ночи, когда все остальные вышли.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-12T00:27:06+00:00"},{"id":"u2_self_censorship_typing","name":"Самоцензура","description":"Начать печатать сообщение в чате 5 раз подряд, но так ничего и не отправить в течение минуты.","category":"message","icon":"💬","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T07:42:47+00:00"},{"id":"u2_symbol_creator","name":"Творец символов","description":"Добавить на сервер 3 новых кастомных эмодзи или стикера.","category":"quest","icon":"🧭","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-08T01:27:16+00:00"},{"id":"u1_secret_schemer","name":"Скрытный интриган","description":"Отправить сообщение, полностью спрятанное под плашку спойлера.","category":"message","icon":"💬","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T23:43:31+00:00"},{"id":"u1_bot_love","name":"Сердце машины","description":"Поставить реакцию на любое сообщение нашего бота HUBBOT.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:29:20+00:00"},{"id":"u1_silence_guard","name":"Страж тишины","description":"Просидеть в голосовом канале 30 минут в полном одиночестве.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T07:53:04+00:00"},{"id":"u1_first_reaction","name":"Одобрено","description":"Поставить первую реакцию на сервере в новом сезоне.","category":"reaction","icon":"✨","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-08T02:04:51+00:00"},{"id":"u1_welcome_to_fog","name":"Добро пожаловать в Туман","description":"Первым на сервере запустить Dead by Daylight в текущем сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T14:33:46+00:00"},{"id":"u1_sweaty_match","name":"Потная катка","description":"Провести в Dota 2 более 90 минут в рамках одного непрерывного запуска, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T13:43:02+00:00"},{"id":"u1_first_contact","name":"Первый контакт","description":"Первым на сервере зайти в любой голосовой канал после запуска сезона.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T10:53:11+00:00"}]},{"user_id":"855837039470575616","telegram_id":"898536995","is_linked":true,"username":"Halliwell","faction_id":"drakaris","faction_name":"Drakaris","faction_icon":"🐉","faction_color":"#AC2239","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/855837039470575616/7cda8a997cc4562a3fcccb81c3027102.png?size=256","pinned_achievements":["u1_face_to_face"],"unlocked_achievements":[{"id":"u1_face_to_face","name":"Лицом к лицу","description":"Первым включить веб-камеру в голосовом канале.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T18:08:04+00:00"}]},{"user_id":"1064940412890005534","telegram_id":"1262442288","is_linked":true,"username":"Кая Ронг","faction_id":"ktolhun","faction_name":"Ktolhun","faction_icon":"🐙","faction_color":"#575EF3","faction_tier":0,"faction_points_contributed":10,"faction_total_points":10,"unlocked_count":1,"level":1,"total_xp":35,"xp_current":35,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/1064940412890005534/a53412c4102d1b7fb3000dcfb14d49d4.png?size=256","pinned_achievements":["u1_vow_of_silence"],"unlocked_achievements":[{"id":"u1_vow_of_silence","name":"Обет молчания","description":"Находиться в компании в голосовом канале 1 час с выключенным микрофоном.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T16:20:21+00:00"}]},{"user_id":"1293853772421926977","telegram_id":null,"is_linked":false,"username":"AHAahahahah","faction_id":"terria","faction_name":"Terria","faction_icon":"🌿","faction_color":"#02B4B4","faction_tier":2,"faction_points_contributed":830,"faction_total_points":830,"unlocked_count":14,"level":24,"total_xp":1180,"xp_current":30,"xp_next":50,"bio_text":"","frame_id":"default","font_id":"default","discord_avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","custom_avatar_url":"","avatar_url":"https://cdn.discordapp.com/avatars/1293853772421926977/6add3681587bc99cfb551490be92393e.png?size=256","pinned_achievements":["u4_step_from_greatness","u4_gate_lord_50","u4_planet_parade","u3_secret_hunter_5","u3_triad_diplomacy","u2_sync_swimming"],"unlocked_achievements":[{"id":"u4_step_from_greatness","name":"В шаге от величия","description":"Сорвать выполнение любого временного достижения на отметке выше 95 процентов.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-12T00:27:00+00:00"},{"id":"u4_gate_lord_50","name":"Владыка Врат","description":"Первым на сервере принести своей фракции 500 Очков Фракции (ОФ) за сезон.","category":"meta","icon":"👑","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-10T17:05:07+00:00"},{"id":"u4_planet_parade","name":"Парад планет","description":"Находиться в голосовом канале вчетвером, где каждый представляет свою уникальную фракцию (Drakaris, Phoxis, Terria, Ktolhun) не меньше 15 минут (забирает первый зашедший в канал).","category":"voice","icon":"🎧","rarity":"epochal","rarity_label":"Эпохальное","rarity_color":"#f59e0b","reward":160,"unlocked_at":"2026-11-04T14:57:03+00:00"},{"id":"u3_secret_hunter_5","name":"Охотник за тайнами","description":"Первым на сервере открыть 5 скрытых достижений.","category":"meta","icon":"👑","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T14:57:11+00:00"},{"id":"u3_triad_diplomacy","name":"Тройственный пакт","description":"Просидеть в одном канале с двумя представителями других фракций 15 минут (в канале не более 3 человек).","category":"voice","icon":"🎧","rarity":"ultrarare","rarity_label":"Ультра-редкое","rarity_color":"#a855f7","reward":80,"unlocked_at":"2026-11-04T13:57:02+00:00"},{"id":"u2_sync_swimming","name":"Синхронное плавание","description":"Зайти в голосовой канал с другим участником с разницей менее 2 секунд.","category":"voice","icon":"🎧","rarity":"rare","rarity_label":"Редкое","rarity_color":"#3b82f6","reward":40,"unlocked_at":"2026-11-10T12:00:45+00:00"},{"id":"u1_projectionist","name":"Киномеханик","description":"Вести непрерывную трансляцию экрана более 2 часов.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-10T17:04:57+00:00"},{"id":"u1_title_collector","name":"Коллекционер тайтлов","description":"Запустить 3 разных игры за 1 час, сидя в голосовом канале.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:58+00:00"},{"id":"u1_heroes_never_die","name":"Герои не умирают","description":"Первым запустить Overwatch в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T16:11:52+00:00"},{"id":"u1_horror_streamer","name":"Стример ужасов","description":"Вести демонстрацию экрана во время игры в Phasmophobia или Dead by Daylight минимум 1 час.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T15:39:02+00:00"},{"id":"u1_director_debut","name":"Режиссерский дебют","description":"Первым на сервере запустить демонстрацию экрана в сезоне.","category":"voice","icon":"🎧","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-04T11:28:16+00:00"},{"id":"u1_call_of_ancients","name":"Зов Древних","description":"Первым запустить Dota 2 в сезоне.","category":"presence","icon":"🎮","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:32:06+00:00"},{"id":"u1_gate_pioneer","name":"Первопроходец Врат","description":"Самым первым на сервере завершить вступительный квест-пути.","category":"quest","icon":"🧭","rarity":"common","rarity_label":"Обычное","rarity_color":"#94a3b8","reward":10,"unlocked_at":"2026-11-03T21:31:07+00:00"}]}]};
     /* __HUB_DB_END__ */
   </script>
 
@@ -1341,8 +1397,17 @@
 
           const rarityLine = document.createElement("div");
           rarityLine.className = "ach-rarity-line";
-          rarityLine.style.color = ach.rarity_color || "#94a3b8";
-          rarityLine.textContent = `Слот ${slotIdx + 1} • ${ach.rarity_label || "Обычное"}`;
+
+          const rarityBadge = document.createElement("span");
+          rarityBadge.className = "ach-rarity-badge";
+          rarityBadge.textContent = ach.rarity_label || "Обычное";
+
+          const slotTag = document.createElement("span");
+          slotTag.className = "ach-slot-tag";
+          slotTag.textContent = `Слот ${slotIdx + 1}`;
+
+          rarityLine.appendChild(rarityBadge);
+          rarityLine.appendChild(slotTag);
 
           btn.appendChild(top);
           btn.appendChild(title);
@@ -1640,7 +1705,7 @@
           const existingIdx = draftState.pinned.indexOf(ach.id);
           const item = document.createElement("button");
           item.type = "button";
-          item.className = `ach-list-item${existingIdx !== -1 ? " in-use" : ""}`;
+          item.className = `ach-list-item rarity-${ach.rarity || "common"}${existingIdx !== -1 ? " in-use" : ""}`;
           item.onclick = () => {
             const next = draftState.pinned.filter(id => id !== ach.id);
             const insertAt = Math.min(slotIdx, next.length);
